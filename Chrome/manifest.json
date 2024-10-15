@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Computer Purchase Assistant - 5",
+  "version": "1.0",
+  "description": "LLM-powered assistant for computer purchases",
+  "permissions": ["contextMenus", "sidePanel", "storage", "https://api.openai.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Computer Purchase Assistant"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  }
+
+}
