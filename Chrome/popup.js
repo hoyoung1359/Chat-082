@@ -1,5 +1,5 @@
 // API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
-const OPENAI_API_KEY = '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';
+const OPENAI_API_KEY = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   const chatMessages = document.getElementById('chat-messages');
