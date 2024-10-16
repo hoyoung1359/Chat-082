@@ -3,7 +3,7 @@
   "name": "Computer Purchase Assistant - 5",
   "version": "1.0",
   "description": "LLM-powered assistant for computer purchases",
-  "permissions": ["contextMenus", "sidePanel", "storage", "https://api.openai.com/*"],
+  "permissions": ["contextMenus", "sidePanel", "storage"],
   "background": {
     "service_worker": "background.js"
   },
