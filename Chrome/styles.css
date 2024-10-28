@@ -1,3 +1,36 @@
+/* 시작 화면 스타일 */
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+#character-image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+#start-button, #help-button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #0084ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#start-button:hover, #help-button:hover {
+  background-color: #0066cc;
+}
+
+
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -18,7 +51,7 @@ body {
 }
 
 #chat-header {
-  background-color: #4a4a4a;
+  background-color: #5f9dd6;
   color: white;
   padding: 10px;
   text-align: center;

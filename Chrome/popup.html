@@ -7,7 +7,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="chat-container">
+
+  <!-- 시작 화면 -->
+  <div id="start-screen">
+    <img src="082.jfif" alt="캐릭터 이미지" id="character-image">
+    <button id="start-button">시작하기</button>
+    <button id="help-button">도움말</button>
+  </div>
+
+  <!-- 채팅 화면 -->
+  <div id="chat-container" style="display: none;">
     <div id="chat-header">
       <h2>Chat-082</h2>
     </div>
@@ -17,6 +26,8 @@
       <button id="send-button">전송</button>
     </div>
   </div>
+
+
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "openSidePanel",
-    title: "측면 패널 열기",
+    title: "채팅 시작하기",
     contexts: ["all"]
   });
 });
