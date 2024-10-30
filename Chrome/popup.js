@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   async function getAIResponse(userMessage) {
-    const prompt = `당신은 컴퓨터 구매를 돕는 전문가입니다. 사용자의 질문에 친절하고 전문적으로 답변해주세요.`;
+    const prompt =  `당신은 컴퓨터 구매를 돕는 전문가입니다. 조립용 컴퓨터 부품을 고르고 있는 구매자의 질문에 친절하고 알기쉽게 간단히 답변해주세요. 비유를 사용해도 좋습니다. 한 질문에 대한 답변은 너무 길지 않게 간단히 해주세요.`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   startButton.addEventListener('click', () => {
     startScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
-    addMessage('assistant', '안녕하세요! 컴퓨터 구매에 관해 어떤 도움이 필요하신가요?');
+    addMessage('assistant', '안녕하세요! 컴퓨터 구매에 관해 어떤 도움이 필요하신가요? (예: “CPU 추천 좀 해주세요”, “4K 영상 편집과 고사양 게임이 가능한 PC를 추천해 주세요”)');
   });
 
   // "도움말" 버튼 클릭 시 알림창 표시

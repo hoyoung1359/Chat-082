@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function getAIResponse(userMessage) {
-    const prompt = `당신은 컴퓨터 구매를 돕는 전문가입니다. 사용자의 질문에 친절하고 전문적으로 답변해주세요.`;
+    const prompt = `당신은 컴퓨터 구매를 돕는 전문가입니다. 조립용 컴퓨터 부품을 고르고 있는 구매자의 질문에 친절하고 알기쉽게 간단히 답변해주세요. 비유를 사용해도 좋습니다. 한 질문에 대한 답변은 너무 길지 않게 간단히 해주세요.`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -41,12 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-4", // 최신 모델로 변경
+          model: "gpt-4o", // 최신 모델로 변경
           messages: [
             { role: "system", content: prompt },
             { role: "user", content: userMessage }
           ],
-          max_tokens: 300,
+          max_tokens: 700,
           temperature: 0.7,
         })
       });
