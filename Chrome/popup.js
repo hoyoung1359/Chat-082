@@ -1,5 +1,6 @@
 // API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
-const OPENAI_API_KEY = '';
+import { OPENAI_API_KEY } from './config.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   
   const startScreen = document.getElementById('start-screen');
@@ -55,8 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          prompt: "컴퓨터 구매를 도와주는 마스코트 캐릭터로, 밝은 표정을 가진 친절한 캐릭터.친근한 분위기입니다. "
-          + "단순하고 만화 스타일로 디자인된 캐릭터.",
+          prompt: "산타할아버지",
           n: 1,
           size: "256x256"
         })
