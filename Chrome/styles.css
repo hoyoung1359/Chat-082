@@ -129,6 +129,22 @@ body {
   background-color: #0066cc;
 }
 
+#apply-button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #0084ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#apply-button:hover {
+  background-color: #0066cc;
+}
+
 /* 스크롤바 스타일링 */
 #chat-messages::-webkit-scrollbar {
   width: 6px;
