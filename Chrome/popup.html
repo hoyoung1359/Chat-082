@@ -5,30 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Computer Purchase Assistant</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <div id="app-container">
 
-  <!-- 시작 화면 -->
-  <div id="start-screen">
-    <img src="images/my082.png" alt="캐릭터 이미지" id="character-image">
-    <div id="button-container">
-      <button id="start-button">START</button>
-      <button id="help-button">HELP</button>
+    <!-- 사이드바 추가 -->
+    <div id="sidebar">
+      <button id="home-button"><i class="fas fa-home"></i></button>
+      <button id="settings-button"><i class="fas fa-cog"></i></button>
+      
     </div>
+
+    <!-- 시작 화면 -->
+    <div id="start-screen">
+      <img src="images/my082.png" alt="캐릭터 이미지" id="character-image">
+      <div id="button-container">
+        <button id="start-button">START</button>
+        <button id="help-button">HELP</button>
+      </div>
+    </div>
+
+    <!-- 채팅 화면 -->
+    <div id="chat-container" style="display: none;">
+      <div id="chat-header">
+        <h2>Chat-082</h2>
+      </div>
+      <div id="chat-messages"></div>
+      <div id="input-container">
+        <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
+        <button id="send-button">전송</button>
+      </div>
+    </div>
+
   </div>
-
-  <!-- 채팅 화면 -->
-  <div id="chat-container" style="display: none;">
-    <div id="chat-header">
-      <h2>Chat-082</h2>
-    </div>
-    <div id="chat-messages"></div>
-    <div id="input-container">
-      <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
-      <button id="send-button">전송</button>
-    </div>
-  </div>
-
 
   <script type="module" src="popup.js"></script>
 </body>
