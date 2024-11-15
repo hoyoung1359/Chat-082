@@ -43,20 +43,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  height: 100%;
+  width: 100%; /* 전체 너비를 사용하도록 변경 */
   background-color: #e4e2dd;
 }
 
 #character-image {
   width: 350px;
   height: 350px;
-  margin-bottom: 300px;
+  margin-bottom: 100px;
 }
 
 #button-container {
   display: flex;
-  gap: 10px;
+  background-color: #e4e2dd;
 }
 
 #start-button, #help-button {
@@ -190,6 +190,9 @@ body {
 /* 반응형 디자인을 위한 미디어 쿼리 */
 @media (max-width: 600px) {
   #chat-container {
+    width: 100%;
+  }
+  #start-screen {
     width: 100%;
   }
 }
