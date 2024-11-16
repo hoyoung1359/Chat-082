@@ -21,8 +21,8 @@
     <div id="start-screen">
       <img src="images/my082.png" alt="캐릭터 이미지" id="character-image">
       <div id="button-container">
-        <button id="start-button">START</button>
-        <button id="help-button">HELP</button>
+        <button id="start-button">시작하기</button>
+        <button id="help-button">이어하기</button>
       </div>
     </div>
 
@@ -37,6 +37,20 @@
         <button id="send-button">전송</button>
       </div>
     </div>
+
+    <!-- 설정 모달 -->
+    <div id="settings-modal" class="modal">
+      <div class="modal-content">
+        <h2>설정</h2>
+        <label for="purpose">사용 목적:</label>
+        <input type="text" id="purpose" name="purpose">
+        <label for="budget">예산:</label>
+        <input type="number" id="budget" name="budget">
+        <button id="save-settings">저장</button>
+        <button id="close-settings">닫기</button>
+      </div>
+    </div>
+  </div>
 
   </div>
 
