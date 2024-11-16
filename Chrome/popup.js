@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // "홈" 버튼 클릭 시 시작 화면으로 돌아가기
   homeButton.addEventListener('click', () => {
     showStartScreen();
-    chatMessages.innerHTML = ''; // 채팅 내용 초기화
+    //chatMessages.innerHTML = ''; // 채팅 내용 초기화
   });
 
   // "설정" 버튼 클릭 시 설정 화면 표시 (향후 구현)
