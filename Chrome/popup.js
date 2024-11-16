@@ -19,11 +19,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatContainer = document.getElementById('chat-container');
   const startButton = document.getElementById('start-button');
   const helpButton = document.getElementById('help-button');
+  const homeButton = document.getElementById('home-button');
+  const settingsButton = document.getElementById('settings-button');
   
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
   const sendButton = document.getElementById('send-button');
   const applyButton = document.getElementById('apply-button'); // 필터 버튼
+
+  function showStartScreen() {
+    startScreen.style.display = 'flex';
+    chatContainer.style.display = 'none';
+  }
+
+  function showChatScreen() {
+    startScreen.style.display = 'none';
+    chatContainer.style.display = 'flex';
+  }
 
   function addMessage(sender, message, isImage = false) {
     const messageElement = document.createElement('div');
@@ -68,7 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          prompt: "산타할아버지",
+          prompt: "Draw the character of 082, a computer purchase guide chatbot. Chat-082 is an custom-built computer purchase guide chatbot using llm.\
+          It helps buyers select computer parts such as cpu and graphic cards from computer purchase sites. \
+          Draw the features of my program well in the character with a simple design that is not complicated to use on the start screen.",
           n: 1,
           size: "256x256"
         })
@@ -220,6 +234,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // "도움말" 버튼 클릭 시 알림창 표시
   helpButton.addEventListener('click', () => {
     alert("이 프로그램은 컴퓨터 구매에 대한 도움을 제공합니다. 질문을 입력하여 도움을 받아보세요!");
+  });
+
+  // "홈" 버튼 클릭 시 시작 화면으로 돌아가기
+  homeButton.addEventListener('click', () => {
+    showStartScreen();
+    //chatMessages.innerHTML = ''; // 채팅 내용 초기화
+  });
+
+  // "설정" 버튼 클릭 시 설정 화면 표시 (향후 구현)
+  settingsButton.addEventListener('click', () => {
+    alert("설정 기능은 아직 구현되지 않았습니다.");
   });
 
   sendButton.addEventListener('click', sendMessage);

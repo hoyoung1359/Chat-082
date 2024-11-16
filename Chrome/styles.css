@@ -1,22 +1,65 @@
+/* 앱 컨테이너 스타일 */
+#app-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* 사이드바 스타일 */
+#sidebar {
+  width: 50px;
+  background-color: #e0edff69;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+#home-button, #settings-button {
+  width: 50px;
+  height: 50px;
+  background-color: #c46554c0;
+  color: white;
+  border: 2px solid #e29b58ea;
+  border-radius: 20%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px; /* 버튼 간 간격 */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#home-button:hover, #settings-button:hover {
+  background-color: #0066cc;
+  color: white;
+}
+
+
+
 /* 시작 화면 스타일 */
 #start-screen {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  height: 100%;
+  width: 100%; /* 전체 너비를 사용하도록 변경 */
   background-color: #e4e2dd;
 }
 
 #character-image {
+  margin-top: 50px;
   width: 350px;
   height: 350px;
-  margin-bottom: 300px;
 }
 
 #button-container {
   display: flex;
-  gap: 10px;
+  background-color: #e4e2dd;
+  padding-bottom: 20px; /* 하단 여백 추가 */
 }
 
 #start-button, #help-button {
@@ -166,6 +209,9 @@ body {
 /* 반응형 디자인을 위한 미디어 쿼리 */
 @media (max-width: 600px) {
   #chat-container {
+    width: 100%;
+  }
+  #start-screen {
     width: 100%;
   }
 }
