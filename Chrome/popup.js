@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const helpButton = document.getElementById('help-button');
   const homeButton = document.getElementById('home-button');
   const settingsButton = document.getElementById('settings-button');
+  const settingsModal = document.getElementById('settings-modal');
+  const saveSettingsButton = document.getElementById('save-settings');
+  const closeSettingsButton = document.getElementById('close-settings');
+  const purposeInput = document.getElementById('purpose');
+  const budgetInput = document.getElementById('budget');
+  
   
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
@@ -53,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // 메시지를 로컬 스토리지에 저장
+    saveMessageToLocalStorage(sender, message, isImage);
   }
 
   async function sendMessage() {
@@ -67,6 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
         await getAIResponse(message);
       }
     }
+  }
+
+  function saveMessageToLocalStorage(sender, message, isImage) {
+    const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    chatHistory.push({ sender, message, isImage });
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+  }
+
+  function loadChatHistoryFromLocalStorage() {
+    const chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    chatMessages.innerHTML = ''; // 기존 메시지 초기화
+    chatHistory.forEach(msg => addMessage(msg.sender, msg.message, msg.isImage));
   }
 
   async function getImageResponse(userMessage) {
@@ -223,6 +244,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
 
+  function saveSettings() {
+    const settings = {
+      purpose: purposeInput.value,
+      budget: budgetInput.value
+    };
+    localStorage.setItem('settings', JSON.stringify(settings));
+  }
+
+  function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('settings')) || {};
+    purposeInput.value = settings.purpose || '';
+    budgetInput.value = settings.budget || '';
+    return settings;
+  }
   
   // "시작하기" 버튼 클릭 시, 시작 화면을 숨기고 채팅 화면을 표시
   startButton.addEventListener('click', () => {
@@ -231,20 +266,23 @@ document.addEventListener('DOMContentLoaded', () => {
     addMessage('assistant', '안녕하세요! 컴퓨터 구매에 관해 어떤 도움이 필요하신가요? (예: “CPU 추천 좀 해주세요”, “4K 영상 편집과 고사양 게임이 가능한 PC를 추천해 주세요”)');
   });
 
-  // "도움말" 버튼 클릭 시 알림창 표시
+  // "이어하기" 버튼 클릭 시 
   helpButton.addEventListener('click', () => {
-    alert("이 프로그램은 컴퓨터 구매에 대한 도움을 제공합니다. 질문을 입력하여 도움을 받아보세요!");
+    loadChatHistoryFromLocalStorage(); // 채팅 기록 불러오기
+    startScreen.style.display = 'none';
+    chatContainer.style.display = 'flex';
   });
 
   // "홈" 버튼 클릭 시 시작 화면으로 돌아가기
   homeButton.addEventListener('click', () => {
     showStartScreen();
-    //chatMessages.innerHTML = ''; // 채팅 내용 초기화
+    chatMessages.innerHTML = ''; // 채팅 내용 초기화
   });
 
-  // "설정" 버튼 클릭 시 설정 화면 표시 (향후 구현)
+  // "설정" 버튼 클릭 시 설정 화면 표시 
   settingsButton.addEventListener('click', () => {
-    alert("설정 기능은 아직 구현되지 않았습니다.");
+    loadSettings();
+    settingsModal.style.display = 'block';
   });
 
   sendButton.addEventListener('click', sendMessage);
@@ -252,6 +290,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  });
+
+  
+  saveSettingsButton.addEventListener('click', () => {
+    saveSettings();
+    settingsModal.style.display = 'none';
+  });
+
+  closeSettingsButton.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
   });
 
   applyButton.addEventListener('click', () => {
@@ -362,6 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return null;
     }
   }
+  
+  
+  loadSettings();
+  // 페이지 로드 시 채팅 기록 불러오기
+  loadChatHistoryFromLocalStorage();
 
   // applyButton.addEventListener('click', () => {
   //   chrome.storage.local.get(["filterDictionary", "mainCategory"], (result) => {
