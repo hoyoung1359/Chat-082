@@ -3,7 +3,7 @@
   "name": "Chat-082",
   "version": "1.0",
   "description": "LLM-powered assistant for computer purchases",
-  "permissions": ["contextMenus", "sidePanel", "storage", "activeTab", "scripting"],
+  "permissions": ["contextMenus", "sidePanel", "storage"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
