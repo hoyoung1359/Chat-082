@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
@@ -74,3 +75,34 @@ class PCBudgetAssistant:
                 "budget": None,
                 "purpose": None
             }
+=======
+import openai
+import os
+from dotenv import load_dotenv
+
+# OpenAI API 키를 환경 변수로 관리
+load_dotenv()
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+async def get_ai_response(user_message: str) -> str:
+    """
+    OpenAI API를 호출하여 AI 응답을 반환합니다.
+    """
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": (
+                    "You are a custom PC purchase guide expert. "
+                    "Answer user questions clearly and concisely about selecting computer parts."
+                )},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=300,
+            temperature=0.7
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Error during OpenAI API call: {e}")
+        return "Sorry, there was an error processing your request."
+>>>>>>> 583c92befffb32b51eb747ed2ce50ee49d10a30e
