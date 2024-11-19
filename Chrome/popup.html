@@ -27,6 +27,7 @@
       </div>
     </div>
 
+
     <!-- 채팅 화면 -->
     <div id="chat-container" style="display: none;">
       <div id="chat-header">
@@ -36,8 +37,35 @@
       <div id="input-container">
         <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
         <button id="send-button">전송</button>
+        <!-- 필터 적용 버튼 -->
+        <button id="apply-button">필터 적용</button>
       </div>
     </div>
+    <!-- 채팅 화면
+    <div id="chat-container" style="display: none;">
+      <div id="chat-header">
+        <h2>Chat-082</h2>
+      </div>
+      <div id="chat-messages"></div>
+      <div id="input-container">
+        <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
+        <button id="send-button">전송</button>
+      </div>
+    </div> -->
+
+    <!-- 설정 모달 -->
+    <div id="settings-modal" class="modal">
+      <div class="modal-content">
+        <h2>설정</h2>
+        <label for="purpose">사용 목적:</label>
+        <input type="text" id="purpose" name="purpose">
+        <label for="budget">예산:</label>
+        <input type="number" id="budget" name="budget">
+        <button id="save-settings">저장</button>
+        <button id="close-settings">닫기</button>
+      </div>
+    </div>
+  </div>
 
     <!-- 설정 모달 -->
     <div id="settings-modal" class="modal">
