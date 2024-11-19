@@ -1,14 +1,9 @@
 from fastapi import APIRouter
-<<<<<<< HEAD
 from app.schemas import ChatRequest, ChatResponse
 from app.services import PCBudgetAssistant
 import os
 from dotenv import load_dotenv
 load_dotenv()
-=======
-from app.services import get_ai_response
-from app.schemas import ChatRequest, ChatResponse
->>>>>>> 583c92befffb32b51eb747ed2ce50ee49d10a30e
 
 chatbot_router = APIRouter(prefix="/chatbot", tags=["Chatbot"])
 
@@ -17,7 +12,6 @@ async def handle_message(chat_request: ChatRequest):
     """
     사용자 메시지를 받아 OpenAI API를 호출한 결과를 반환합니다.
     """
-<<<<<<< HEAD
     # PCBudgetAssistant 초기화
     chatbot = PCBudgetAssistant(api_key=os.environ.get("OPENAI_API_KEY"))
     
@@ -43,7 +37,3 @@ async def handle_message(chat_request: ChatRequest):
         budget=budget,
         purpose=purpose
     )
-=======
-    response = await get_ai_response(chat_request.message)
-    return ChatResponse(message=response)
->>>>>>> 583c92befffb32b51eb747ed2ce50ee49d10a30e
