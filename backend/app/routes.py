@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas import ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, PartsRequest, PartsResponse
+from app.schemas import ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, PartsRequest, PartsResponse, UserQuestionRequest, UserQuestionResponse
 from app.services import PCBudgetAssistant
 import os
 from dotenv import load_dotenv
@@ -16,7 +16,7 @@ chatbot = PCBudgetAssistant(api_key=os.environ.get("OPENAI_API_KEY"))
 @chatbot_router.post("/message", response_model=ChatResponse)
 async def handle_message(chat_request: ChatRequest):
     """
-    사용자 메시지를 받아 OpenAI API를 호출한 결과를 반환합니다.
+    사용자 메시지를 받아 처리한 후 예산과 목적 정보를 찾고 다음 단계로 진행할지 여부를 반환합니다.
     """
     try:
         # 사용자 메시지 처리
@@ -66,3 +66,22 @@ async def select_parts(parts_request: PartsRequest):
         return PartsResponse(response=response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"부품 선택 오류: {e}")
+
+
+@chatbot_router.post("/user_question", response_model=UserQuestionResponse)
+async def user_question(question_request: UserQuestionRequest):
+    """
+    사용자의 기습 질문에 답변합니다.
+    """
+    try:
+        response = await chatbot.user_question(
+            user_id= question_request.user_id,
+            question= question_request.question
+        )
+        if response["edit"] == 'O':
+            edit = True
+        else:
+            edit = False
+        return PartsResponse(answer=response["answer"], edit=edit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"사용자 질문 오류: {e}")

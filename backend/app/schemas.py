@@ -26,3 +26,12 @@ class PartsRequest(BaseModel):
 class PartsResponse(BaseModel):
     response: str
     selected_part: Dict = None  # 선택된 부품 정보
+
+
+class UserQuestionRequest(BaseModel):
+    user_id: str
+    question: str
+
+class UserQuestionResponse(BaseModel):
+    answer: str
+    edit: bool
