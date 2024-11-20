@@ -10,6 +10,7 @@ class ChatResponse(BaseModel):
     message: str
     budget: str
     purpose: str
+    next_step: bool
 
 # 새로운 스키마 정의
 class EstimateRequest(BaseModel):

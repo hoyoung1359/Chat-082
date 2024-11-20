@@ -24,23 +24,18 @@ async def handle_message(chat_request: ChatRequest):
             user_id=chat_request.user_id,  # 사용자 ID 전달
             user_message=chat_request.message
         )
-        
+        next_step = False
         # 예산과 목적 업데이트
         budget = response_dict["budget"]
         purpose = response_dict["purpose"]
-
-        # 조건에 따라 응답 생성
-        if budget == "없음" or purpose == "없음":
-            # 예산 또는 목적이 부족하면 역질문 응답
-            response_message = response_dict["response"]
-        else:
-            # 예산과 목적이 모두 채워지면 최종 응답
-            response_message = "이대로 조립형 PC를 맞춰드릴까요?"
-
+        if budget != "없음" and purpose != "없음":
+            next_step = True
+        response_message = response_dict["response"]
         return ChatResponse(
             message=response_message,
             budget=budget,
-            purpose=purpose
+            purpose=purpose,
+            next_step=next_step
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"서버 오류: {e}")

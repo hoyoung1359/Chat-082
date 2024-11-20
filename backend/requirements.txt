@@ -3,3 +3,5 @@ uvicorn
 openai
 pydantic
 dotenv
+langchain_community
+langchain
