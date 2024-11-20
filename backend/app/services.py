@@ -75,6 +75,7 @@ class PCBudgetAssistant:
             "특히, 사용자가 그냥 게임이나 프로그램이라고 하면 어떤 게임이나 프로그램인지 더 구체적으로 들을 수 있게 다시 질문해 주세요."
             "사용자가 예산 및 목적 구체화를 포기한 것이 확신되면, '예산=불분명 목적=불분명' 사이에 그래도 일반적인 견적을 맞추실 것인지 질문해주세요."
             "또한 하고 싶은 말은 최대한 친절하지만 예산과 목적 중 한번에 하나만 물어보고 최대한 간결하게 작성해주세요."
+            "예산과 목적 정보가 충분하다고 생각되면 더 요구할 것이 있는지 물어보세요."
             "다음은 이전 대화 내용입니다: "
             f"{' '.join(history) if history else '이전 대화 내용 없음'}."
             "다음은 현재 사용자 메시지입니다."
@@ -95,8 +96,12 @@ class PCBudgetAssistant:
                 print(f"Invalid JSON: {e}")
             
             # 예산 및 목적 추출
-            budget = response_dict.get("예산", budget)
-            purpose = response_dict.get("목적", purpose)
+            budget_tmp = response_dict.get("예산", budget)
+            purpose_tmp = response_dict.get("목적", purpose)
+            if budget_tmp != "없음":
+                budget = budget_tmp
+            if purpose_tmp != "없음":
+                purpose = purpose_tmp
             content = response_dict.get("대답", "")
             
             # 상태 업데이트
