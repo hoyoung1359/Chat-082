@@ -48,7 +48,7 @@ async def generate_estimate(estimate_request: EstimateRequest):
     """
     try:
         response = await chatbot.generate_estimate(user_id=estimate_request.user_id)
-        return EstimateResponse(response=response["response"])
+        return EstimateResponse(response=response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"견적 생성 오류: {e}")
 
@@ -63,6 +63,6 @@ async def select_parts(parts_request: PartsRequest):
             user_id=parts_request.user_id,
             parts_data=parts_request.parts_data
         )
-        return PartsResponse(response=response["response"], selected_part=response.get("selected_part"))
+        return PartsResponse(response=response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"부품 선택 오류: {e}")

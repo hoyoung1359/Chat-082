@@ -5,6 +5,25 @@ from app.read_filter import read_all_filters, read_one_filter
 import json
 
 
+def make_string_to_dict(string: str) -> dict:
+    """
+    문자열을 dict 형식으로 변환
+    Args:
+        string: dict 형식으로 변환할 문자열
+    Returns:
+        dict: dict 형식으로 변환된 결과
+    """
+    start_index = string.find("{")  # '{' 위치 찾기
+    end_index = string.rfind("}")  # '}' 위치 찾기
+    if start_index != -1 and end_index != -1:
+        # JSON 부분만 추출
+        string = string[start_index:end_index + 1] # JSON 부분만 추출
+    try:
+        dictionary = json.loads(string)
+    except json.JSONDecodeError as e:
+        print(f"Invalid JSON: {e}")
+    return dictionary
+
 class PCBudgetAssistant:
     """
     친절한 조립형 PC 견적 전문가 챗봇 클래스
@@ -61,6 +80,7 @@ class PCBudgetAssistant:
         history = user_state["history"]
         prompt = (
             f"시스템이 이미 알고 있는 사용자의 예산 정보는 {budget}이며, 사용 목적 정보는 '{purpose}'입니다. "
+            "사용자의 예산과 목적 정보에 새로운 것이 있다면 추출하고, 없다면 이전 정보를 유지해주세요. "
             """
             반드시 다음과 같은 JSON 구조로 대답해주세요.:
             {
@@ -85,16 +105,7 @@ class PCBudgetAssistant:
         try:
             # 대화 기록과 함께 LangChain 호출
             response = await self.chain.arun(user_message=prompt)
-            start_index = response.find("{")  # '{' 위치 찾기
-            end_index = response.rfind("}")  # '}' 위치 찾기
-
-            if start_index != -1 and end_index != -1:
-                # JSON 부분만 추출
-                response = response[start_index:end_index + 1] # JSON 부분만 추출
-            try:
-                response_dict = json.loads(response)
-            except json.JSONDecodeError as e:
-                print(f"Invalid JSON: {e}")
+            response_dict = make_string_to_dict(response)
             
             # 예산 및 목적 추출
             budget_tmp = response_dict.get("예산", budget)
@@ -149,7 +160,7 @@ class PCBudgetAssistant:
             f"사용자의 예산은 {budget}이며, 사용 목적은 '{purpose}'입니다. "
             f"{filter_info}의 내용 속에 있는 시리즈만으로 각 부품의 시리즈를 골라서 견적을 완성하되, 반드시 예산을 초과하지 않는 선에서 사용 목적에 맞게 선택해주세요."
             "총 세 종류의 견적을 제시해주세요. 가성비, 밸런스, 고성능 순으로 견적을 제시해주세요. "
-            "출력 예시는 다음과 같습니다."
+            "출력 예시는 다음과 같습니다. 예시일 뿐이므로 구조를 참고하고 내용은 무시하세요."
             """
             {
                 "가성비": {
@@ -159,6 +170,7 @@ class PCBudgetAssistant:
                 "메인보드": "AMD-B450",
                 "SSD": "480~512GB",
                 "파워": "400~499W"
+                "이유": "배틀그라운드를 중간 옵션 이상에서 즐길 수 있도록 GTX 1660 SUPER 그래픽카드를 사용하는 견적을 추천하였습니다. 이 구성은 60fps 이상의 안정적인 성능을 제공하며, 발열을 최소화하여 장시간 쾌적한 게임 환경을 보장합니다. 예산 120만 원 내에서 제안하는 가성비 견적입니다."
                 },
                 "밸런스": {
                 "CPU": "라이젠 5",
@@ -167,6 +179,7 @@ class PCBudgetAssistant:
                 "메인보드": "AMD-B550",
                 "SSD": "960GB~1TB",
                 "파워": "500~599W"
+                "이유": "배틀그라운드를 고옵션에서 즐길 수 있도록 RTX 3060Ti 그래픽카드를 사용하는 견적을 추천하였습니다. 이 구성은 120fps 이상의 성능을 제공하며, 고사양 게임에도 부드러운 그래픽을 제공합니다. 예산 150만 원 내에서 제안하는 밸런스 견적입니다."
                 },
                 "고성능": {
                 "CPU": "라이젠 7",
@@ -175,10 +188,12 @@ class PCBudgetAssistant:
                 "메인보드": "AMD-X570",
                 "SSD": "1.5~4TB",
                 "파워": "700~799W"
+                "이유": "배틀그라운드를 고옵션에서 즐길 수 있도록 RTX 4080 SUPER을 추천하였습니다. 120fps 이상의 성능과 부드러운 그래픽을 제공하며, 장시간 안정적인 게임 플레이가 가능합니다. 고사양 게임에 최적화된 구성입니다."
             }
             }
             """
             "단, 대화 형식이 아니라 출력 예시의 json 구조를 반드시 맞춰서 견적을 제시해주세요." 
+            "이유에는 각 견적의 부품들 선택 이유 모두를 간단히 작성해주세요."
             "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. PC 견적을 맞추는데 참고할 만한 내용만 참고해 주세요."
             f"{' '.join(history) if history else '이전 대화 내용 없음'}."
         )
@@ -187,24 +202,12 @@ class PCBudgetAssistant:
             # LangChain 호출
             # 대화 기록과 함께 LangChain 호출
             response = await self.chain.arun(user_message=prompt)
-            start_index = response.find("{")  # '{' 위치 찾기
-            end_index = response.rfind("}")  # '}' 위치 찾기
-
-            if start_index != -1 and end_index != -1:
-                # JSON 부분만 추출
-                response = response[start_index:end_index + 1] # JSON 부분만 추출
-            try:
-                response_dict = json.loads(response)
-
-            except json.JSONDecodeError as e:
-                print(f"Invalid JSON: {e}")
-
-            return {"response": response_dict}
+            return make_string_to_dict(response)
         except Exception as e:
             print(f"GPT 호출 중 오류 발생: {e}")
             return {"response": "견적을 생성하는 중 오류가 발생했습니다. 다시 시도해주세요."}
 
-    async def select_parts(self, user_id: str, parts_data: list) -> dict:
+    async def select_parts(self, user_id: str, parts_data: dict) -> dict:
         """
         부품 데이터를 GPT를 통해 최적의 부품 추천
         Args:
@@ -215,33 +218,51 @@ class PCBudgetAssistant:
         """
         if not parts_data:
             return {"response": "부품 데이터가 비어 있습니다. 유효한 데이터를 입력해주세요."}
-
+        else:
+            parts_data = json.dumps(parts_data, ensure_ascii=False, indent=4)
         if user_id not in self.user_states:
             return {"response": "사용자 상태를 찾을 수 없습니다. 먼저 대화를 시작해주세요."}
-
         user_state = self.user_states[user_id]
         budget = user_state["budget"]
         purpose = user_state["purpose"]
         history = user_state["history"]
-
-        # GPT에게 요청할 입력 메시지 생성
-        parts_description = "\n".join(
-            [f"{idx+1}. {part['name']} - 가격 대비 성능: {part['value_for_money']}" for idx, part in enumerate(parts_data)]
-        )
-
         prompt = (
             f"사용자의 예산은 {budget}이며, 사용 목적은 '{purpose}'입니다. "
-            "다음은 선택 가능한 부품 목록입니다:\n"
-            f"{parts_description}\n\n"
-            "이 정보를 기반으로 가장 적합한 부품을 선택하고 이유를 설명해주세요. "
-            "참고로 사용자는 이전 대화에서 이렇게 이야기했습니다: "
-            f"{' '.join(history[-3:]) if history else '이전 대화 내용 없음'}."
+            "사용자의 예산과 목적에 맞는 부품들을 선택해주세요. "
+            "예산을 최대한 초과하지 않아야 합니다."
+            f"부품 리스트는 다음과 같습니다:{parts_data}"
+            "아래는 딥러닝 학습을 위한 PC의 출력 예시이며, 예시일 뿐이므로 구조를 참고하세요"
+            """
+            {
+                'CPU': '[AMD] 라이젠7 그래니트 9700X (8코어/16스레드/3.8GHz/대리점정품/쿨러포함) 멀티팩',
+                'CPU이유': '라이젠7 9700X는 8코어 16스레드로 멀티스레딩 작업에 최적화되어 있어 딥러닝 학습 시 병렬 처리에 강점이 있습니다. 높은 기본 클럭 속도(3.8GHz)는 데이터 전처리 및 모델 트레이닝 속도를 증가시킵니다.',
+                
+                '메모리': '[삼성전자] 삼성 DDR5 PC5-44800 [16GB] (5600)',
+                '메모리이유': 'DDR5 메모리는 DDR4보다 대역폭이 더 넓어 데이터 처리 속도가 빠릅니다. 16GB는 기본 딥러닝 학습을 위한 최소 권장 사양이며, 5600MHz는 데이터 로드 및 모델 트레이닝 중 높은 성능을 보장합니다.',
+
+                '그래픽카드': '[MSI] GeForce RTX 4060 Ti 벤투스 2X 블랙 OC D6 8GB',
+                '그래픽카드이유': 'RTX 4060 Ti는 8GB VRAM과 CUDA 코어를 지원하여 딥러닝 학습에 필수적인 GPU 가속에 적합합니다. 최신 RTX 아키텍처를 활용하여 Tensor Core와 CUDA Core 성능을 극대화할 수 있습니다. 학습 데이터가 크지 않다면 효율적인 선택입니다.',
+
+                '메인보드': '[GIGABYTE] B650M AORUS ELITE AX ICE 제이씨현 (AMD B650/M-ATX)',
+                '메인보드이유': 'B650 칩셋은 라이젠7과 완벽히 호환되며, DDR5 메모리와 PCIe 4.0을 지원해 고속 SSD 및 최신 그래픽카드와의 연결에서 병목현상을 줄입니다. 안정적인 전원 공급도 장점입니다.',
+
+                'SSD': '[삼성전자] 공식인증 980 M.2 NVMe 2280 [500GB MZ-V8V500BW]',
+                'SSD이유': '삼성 980 M.2 NVMe SSD는 높은 읽기/쓰기 속도를 제공하여 데이터 로드 및 학습 체크포인트 저장 시간을 단축합니다. 500GB는 딥러닝 학습 환경을 구축하기 위한 최소 용량이며, 빠른 속도는 효율적인 학습에 도움을 줍니다.',
+
+                '파워': '[마이크로닉스] Classic II 풀체인지 600W 80PLUS BRONZE 230V EU (ATX/600W) ATX3.1 벌크형',
+                '파워이유': '600W 파워는 라이젠7과 RTX 4060 Ti를 안정적으로 구동하기에 충분하며, 80PLUS BRONZE 인증은 에너지 효율이 높아 장시간 학습 작업에도 안정적입니다. 최신 ATX3.1 규격을 지원하여 확장성도 보장합니다.'
+            }
+            """
+            "단, 대화 형식이 아니라 출력 예시의 json 구조를 반드시 맞춰서 부품 리스트에 있는 실제 부품명만을 선택해주세요."
+            "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. 부품을 선택하는데 참고할 만한 내용이 있다면 참고해주세요."
+            f"{' '.join(history) if history else '이전 대화 내용 없음'}."
         )
+
 
         try:
             # LangChain 호출
             response = await self.chain.arun(user_message=prompt)
-            return {"response": response.strip()}
+            return make_string_to_dict(response)
         except Exception as e:
             print(f"GPT 호출 중 오류 발생: {e}")
             return {"response": "부품을 선택하는 중 오류가 발생했습니다. 다시 시도해주세요."}

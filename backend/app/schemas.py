@@ -21,7 +21,7 @@ class EstimateResponse(BaseModel):
 
 class PartsRequest(BaseModel):
     user_id: str
-    parts_data: List[Dict]  # 부품 데이터는 리스트 형태로 전달
+    parts_data: Dict  # 부품 데이터는 리스트 형태로 전달
 
 class PartsResponse(BaseModel):
     response: str
