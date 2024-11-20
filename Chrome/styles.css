@@ -15,7 +15,7 @@
 }
 
 
-#home-button, #settings-button {
+#home-button, #settings-button, #quotation-button {
   width: 50px;
   height: 50px;
   background-color: #c46554c0;
@@ -31,7 +31,7 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-#home-button:hover, #settings-button:hover {
+#home-button:hover, #settings-button:hover, #quotation-button:hover {
   background-color: #0066cc;
   color: white;
 }
@@ -263,12 +263,12 @@ body {
   background-color: #0066cc;
 }
 
-#close-settings {
+#close-settings, #close-quotation {
   background-color: #ccc;
   margin-left: 10px;
 }
 
-#close-settings:hover {
+#close-settings:hover, #close-quotation:hover {
   background-color: #999;
 }
 
@@ -281,5 +281,129 @@ body {
   }
   #start-screen {
     width: 100%;
+  }
+}
+
+/****************************** 견적서 html css ******************************/
+/* Quotation popup container */
+#quotation-popup-container {
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Title for the quotation popup */
+#quotation-popup-container h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Quotations container */
+#quotations-container {
+  display: flex;
+  justify-content: space-between; /* Space between the quotations */
+  gap: 20px; /* Add spacing between quotations */
+  margin-top: 20px;
+}
+
+/* Apply additional margins for edge columns */
+.quotation:first-child {
+  margin-left: 20px;
+}
+
+.quotation:last-child {
+  margin-right: 20px;
+}
+
+/* Individual Quotation Block */
+.quotation {
+  width: 30%;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.quotation:hover {
+  transform: translateY(-5px); /* Slight hover effect */
+}
+
+/* Image placeholder */
+.image-placeholder {
+  width: 100%;
+  height: 150px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  line-height: 150px;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Details list inside the quotation */
+.quotation .details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 14px;
+}
+
+.quotation .details li {
+  margin: 10px 0;
+}
+
+.quotation .details li strong {
+  color: #333; /* Bold text color */
+}
+
+/* Close button */
+#close-popup {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #db4a2b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#close-popup:hover {
+  background-color: #b4321f;
+}
+
+/* Scrollbars for small popups */
+#quotation-popup-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#quotation-popup-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#quotation-popup-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+#quotation-popup-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive design for popup */
+@media (max-width: 600px) {
+  #quotations-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quotation {
+    width: 100%; /* Take full width on small screens */
   }
 }

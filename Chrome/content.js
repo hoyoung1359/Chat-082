@@ -15,6 +15,7 @@ function getFilterOptions() {
 
     // Define the filter options for each main category
     const mainCategory = document.querySelector('#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.top_list > ul > li.on > a');
+    
     if (mainCategory) {
         const categoryText = mainCategory.textContent.trim();
 
