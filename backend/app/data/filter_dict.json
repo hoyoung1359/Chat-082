@@ -30,6 +30,8 @@
     "GPU": [
         "RTX4090",
         "RTX4080 SUPER",
+        "RTX4080",
+        "RTX4070Ti SUPER",
         "RTX4070",
         "RTX4060Ti",
         "RTX3090",

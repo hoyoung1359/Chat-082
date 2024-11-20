@@ -17,7 +17,7 @@ class EstimateRequest(BaseModel):
     user_id: str
 
 class EstimateResponse(BaseModel):
-    response: str
+    response: Dict
 
 class PartsRequest(BaseModel):
     user_id: str
