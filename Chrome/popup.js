@@ -3,18 +3,6 @@ import { OPENAI_API_KEY } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Retrieve filterDictionary from Chrome storage and initialize chatbot
-  chrome.storage.local.get("filterDictionary", (result) => {
-    const filterDictionary = result.filterDictionary;
-
-    if (filterDictionary) {
-      console.log("Filter options retrieved:", filterDictionary);
-      
-      // You can pass the filterDictionary to other functions here if needed
-    } else {
-      console.log("No filter options found.");
-    }
-  });
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
   const startButton = document.getElementById('start-button');
@@ -32,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const userInput = document.getElementById('user-input');
   const sendButton = document.getElementById('send-button');
   const applyButton = document.getElementById('apply-button'); // 필터 버튼
+
   function showStartScreen() {
     startScreen.style.display = 'flex';
     chatContainer.style.display = 'none';
@@ -300,6 +289,31 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsModal.style.display = 'none';
   });
 
+  ///////////////////////////////////// 견적서 관련 //////////////////////////////////////////
+  // "견적" 버튼 클릭 시 팝업 열기
+  document.getElementById('quotation-button').addEventListener('click', () => {
+    // Open the quotation.html popup
+    const popupWindow = window.open(
+      'quotation.html', // Path to your popup HTML
+      'Quotation Popup', // Popup window name
+      'width=800,height=600,resizable=no,scrollbars=yes'
+    );
+  });
+
+  ///////////////////////////////////// 필터 관련 //////////////////////////////////////////
+  // 크폼 저장소에서 filterDictionary 가져오기
+  chrome.storage.local.get("filterDictionary", (result) => {
+    const filterDictionary = result.filterDictionary;
+
+    if (filterDictionary) {
+      console.log("Filter options retrieved:", filterDictionary);
+      
+      // You can pass the filterDictionary to other functions here if needed
+    } else {
+      console.log("No filter options found.");
+    }
+  });
+
   applyButton.addEventListener('click', () => {
     chrome.storage.local.get(["selectedFilters", "filterDictionary"], (result) => {
       const selectedFilters = result.selectedFilters || [];
@@ -409,6 +423,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  loadSettings();
+  // 페이지 로드 시 채팅 기록 불러오기
+  // loadChatHistoryFromLocalStorage();
+});
+
+
   // applyButton.addEventListener('click', () => {
   //   chrome.storage.local.get(["filterDictionary", "mainCategory"], (result) => {
   //     const { filterDictionary, mainCategory } = result;
@@ -473,7 +493,3 @@ document.addEventListener('DOMContentLoaded', () => {
   //     }
   //   });
   // });
-  loadSettings();
-  // 페이지 로드 시 채팅 기록 불러오기
-  loadChatHistoryFromLocalStorage();
-});
