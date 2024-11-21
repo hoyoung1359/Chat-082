@@ -401,7 +401,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
     
+  // document.getElementById('back-button').addEventListener('click', () => {
+  //   // Switch back to chat screen
+  //   resultScreen.style.display = 'none';
+  //   chatContainer.style.display = 'flex';
+  // });
 
+  document.getElementById('back-button').addEventListener('click', () => {
+    // Logic to go back to the chat screen
+    if (resultScreen.style.display === 'flex') {
+      resultScreen.style.display = 'none';
+      chatContainer.style.display = 'flex';
+    } else if (chatContainer.style.display === 'flex') {
+      chatContainer.style.display = 'none';
+      startScreen.style.display = 'flex';
+    }
+  });
+  
     // 크폼 저장소에서 filterDictionary 가져오기
     chrome.storage.local.get("filterDictionary", (result) => {
       const filterDictionary = result.filterDictionary;

@@ -15,7 +15,7 @@
 }
 
 
-#home-button, #settings-button, #quotation-button {
+#home-button, #settings-button, #quotation-button, #back-button {
   width: 50px;
   height: 50px;
   background-color: #c46554c0;
@@ -31,7 +31,7 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-#home-button:hover, #settings-button:hover, #quotation-button:hover {
+#home-button:hover, #settings-button:hover, #quotation-button:hover, #back-button:hover {
   background-color: #0066cc;
   color: white;
 }
