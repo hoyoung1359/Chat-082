@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeSettingsButton = document.getElementById('close-settings');
   const purposeInput = document.getElementById('purpose');
   const budgetInput = document.getElementById('budget');
+  const userID = document.getElementById('userID')
   
   
   const chatMessages = document.getElementById('chat-messages');
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function sendMessage() {
     const message = userInput.value.trim();
+    const user_id = userID.value
 
         if (message) {
             addMessage('user', message); // 사용자 메시지를 화면에 추가
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
+                        user_id: user_id, // 사용자 ID (필요 시 동적으로 설정)
                         message: message
                     })
                 });
@@ -260,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function saveSettings() {
     const settings = {
+      user_id: userID.value,
       purpose: purposeInput.value,
       budget: budgetInput.value
     };
@@ -268,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function loadSettings() {
     const settings = JSON.parse(localStorage.getItem('settings')) || {};
+    userID.value = settings.userID || '';
     purposeInput.value = settings.purpose || '';
     budgetInput.value = settings.budget || '';
     return settings;
@@ -330,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // quotation.html 팝업 열기 및 데이터 전달
   document.getElementById('result-button').addEventListener('click', async () => {
     try {
+        const user_id = userID.value
         // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
         const response1 = await fetch('http://43.202.99.126:8000/chatbot/generate-estimate', {
             method: 'POST',
@@ -337,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
+                user_id: user_id, // 사용자 ID (필요 시 동적으로 설정)
             })
         });
 
