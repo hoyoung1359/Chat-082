@@ -302,64 +302,88 @@ body {
 /* Quotations container */
 #quotations-container {
   display: flex;
-  justify-content: space-between; /* Space between the quotations */
+  flex-direction: column; /* 세로 정렬 */ 
   gap: 20px; /* Add spacing between quotations */
   margin-top: 20px;
 }
 
-/* Apply additional margins for edge columns */
-.quotation:first-child {
-  margin-left: 20px;
-}
-
-.quotation:last-child {
-  margin-right: 20px;
-}
-
 /* Individual Quotation Block */
 .quotation {
-  width: 30%;
+  width: 100%;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
-  text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 .quotation:hover {
-  transform: translateY(-5px); /* Slight hover effect */
+  transform: translateY(-10px); /* Slight hover effect */
+}
+
+/* 제목 스타일 */
+.quotation h3 {
+  margin: 0 0 15px 0; /* 제목과 아래 내용 간격 */
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center; /* 왼쪽 정렬 */
+}
+
+/* 이미지와 텍스트 정렬 */
+.quotation-content {
+
+  display: flex;
+  align-items: flex-start; /* 텍스트와 이미지의 위쪽 정렬 */
+  gap: 20px; /* 이미지와 텍스트 간격 */
 }
 
 /* Image placeholder */
 .image-placeholder {
-  width: 100%;
+  width: 150px;
   height: 150px;
-  background-color: #e0e0e0;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  line-height: 150px;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 15px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #666;
 }
 
-/* Details list inside the quotation */
-.quotation .details {
-  list-style: none;
+.image-placeholder img {
+  max-width: 100%; /* 이미지가 placeholder의 너비를 넘지 않도록 설정 */
+  max-height: 100%; /* 이미지가 placeholder의 높이를 넘지 않도록 설정 */
+  object-fit: cover; /* 이미지 비율을 유지하며 placeholder에 맞추기 */
+  border-radius: inherit; /* 부모의 border-radius를 상속 */
+}
+
+/* 세부 정보 리스트 */
+.details {
+  list-style-type: none;
   padding: 0;
   margin: 0;
-  text-align: left;
-  font-size: 14px;
 }
 
-.quotation .details li {
-  margin: 10px 0;
+.details li {
+  margin-bottom: 5px; /* 항목 간의 간격 */
 }
 
-.quotation .details li strong {
-  color: #333; /* Bold text color */
+.details strong {
+  color: #333;
+}
+
+.reason {
+  margin-top: 15px; /* 리스트와 이유 항목 사이 간격 */
+  font-size: 0.95rem; /* 이유 텍스트 크기 */
+  color: #555; /* 이유 텍스트 색상 */
+}
+
+.reason strong {
+  color: #333; /* "이유:" 강조 */
 }
 
 /* Close button */

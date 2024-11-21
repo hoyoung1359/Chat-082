@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
+  const resultScreen = document.getElementById('result-screen');
   const startButton = document.getElementById('start-button');
   const helpButton = document.getElementById('help-button');
   const homeButton = document.getElementById('home-button');
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function showStartScreen() {
     startScreen.style.display = 'flex';
     chatContainer.style.display = 'none';
+    resultScreen.style.display = 'none';
   }
 
   function showChatScreen() {
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // FastAPI 서버에 POST 요청을 보냅니다
-                const response = await fetch('http://52.78.184.15:8000/chatbot/message', {
+                const response = await fetch('http://43.202.99.126:8000/chatbot/message', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -329,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('result-button').addEventListener('click', async () => {
     try {
         // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
-        const response1 = await fetch('http://52.78.184.15:8000/chatbot/generate-estimate', {
+        const response1 = await fetch('http://43.202.99.126:8000/chatbot/generate-estimate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -345,58 +347,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await response1.json();
         addMessage('assistant', data["response"]["고성능"]["CPU"]);
-        
-        //document.getElementById('budget-memory').textContent = data["response"]["가성비"]["메모리"];
-        // quotation.html 팝업 창 열기
-        const popupWindow = window.open(
-            'quotation.html', // Path to your popup HTML
-            'Quotation Popup', // Popup window name
-            'width=800,height=600,resizable=no,scrollbars=yes'
-        );
 
-        // 팝업 창이 로드되었을 때 데이터를 전달합니다.
-        popupWindow.onload = function() {
-            popupWindow.postMessage(data.response, '*'); // FastAPI 응답 데이터를 전달
-        };
+        document.getElementById('bg-cpu').textContent = data["response"]["가성비"]["CPU"];
+        document.getElementById('bg-memory').textContent = data["response"]["가성비"]["메모리"];
+        document.getElementById('bg-graphic').textContent = data["response"]["가성비"]["그래픽카드"];
+        document.getElementById('bg-ssd').textContent = data["response"]["가성비"]["SSD"];
+        document.getElementById('bg-power').textContent = data["response"]["가성비"]["파워"];
+        document.getElementById('bg-main').textContent = data["response"]["가성비"]["메인보드"];
+        document.getElementById('bg-reason').textContent = data["response"]["가성비"]["이유"];
+
+        document.getElementById('ba-cpu').textContent = data["response"]["밸런스"]["CPU"];
+        document.getElementById('ba-memory').textContent = data["response"]["밸런스"]["메모리"];
+        document.getElementById('ba-graphic').textContent = data["response"]["밸런스"]["그래픽카드"];
+        document.getElementById('ba-ssd').textContent = data["response"]["밸런스"]["SSD"];
+        document.getElementById('ba-power').textContent = data["response"]["밸런스"]["파워"];
+        document.getElementById('ba-main').textContent = data["response"]["밸런스"]["메인보드"];
+        document.getElementById('ba-reason').textContent = data["response"]["밸런스"]["이유"];
+
+        document.getElementById('hp-cpu').textContent = data["response"]["고성능"]["CPU"];
+        document.getElementById('hp-memory').textContent = data["response"]["고성능"]["메모리"];
+        document.getElementById('hp-graphic').textContent = data["response"]["고성능"]["그래픽카드"];
+        document.getElementById('hp-ssd').textContent = data["response"]["고성능"]["SSD"];
+        document.getElementById('hp-power').textContent = data["response"]["고성능"]["파워"];
+        document.getElementById('hp-main').textContent = data["response"]["고성능"]["메인보드"];
+        document.getElementById('hp-reason').textContent = data["response"]["고성능"]["이유"];
         
-        document.getElementById('hcpu').textContent = data["response"]["고성능"]["CPU"];
+        chatContainer.style.display = 'none';
+        resultScreen.style.display = 'flex';
+
+
+        
+        // //document.getElementById('budget-memory').textContent = data["response"]["가성비"]["메모리"];
+        // // quotation.html 팝업 창 열기
+        // const popupWindow = window.open(
+        //     'quotation.html', // Path to your popup HTML
+        //     'Quotation Popup', // Popup window name
+        //     'width=800,height=600,resizable=no,scrollbars=yes'
+        // );
+
+        // // 팝업 창이 로드되었을 때 데이터를 전달합니다.
+        // popupWindow.onload = function() {
+        //     popupWindow.postMessage(data.response, '*'); // FastAPI 응답 데이터를 전달
+        // };
+        
+        //document.getElementById('hcpu').textContent = data["response"]["고성능"]["CPU"];
     } catch (error) {
         console.error('Error:', error);
     }
   });
     
-    
-  //   resultButton.addEventListener('click', () => {
-  //       showResult();
-  //   });
-
-  // async function showResult(){
-  //     try {
-  //       // FastAPI 서버에 POST 요청을 보냅니다
-  //       const response = await fetch('http://52.78.184.15:8000/chatbot/generate-estimate', {
-  //           method: 'POST',
-  //           headers: {
-  //               'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //               user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
-  //           })
-  //       });
-
-  //       if (!response.ok) {
-  //           throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       const data = await response.json();
-        
-  //       // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
-  //       addMessage('assistant', data.message);
-
-  //   } catch (error) {
-  //       console.error('Error:', error);
-  //       addMessage('system', '서버와 통신 중 오류가 발생했습니다.');
-  //   }
-  //   }
 
     // 크폼 저장소에서 filterDictionary 가져오기
     chrome.storage.local.get("filterDictionary", (result) => {

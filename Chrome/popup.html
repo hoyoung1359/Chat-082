@@ -43,6 +43,76 @@
       </div>
     </div>
 
+    <div id="result-screen" style="display: none;">
+      <div id="quotations-container">
+
+
+        <!-- 견적 1 -->
+        <div class="quotation">
+          <h3>가성비</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/저사양.jpg" alt="저사양 이미지" id="low-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU: </strong><span id="bg-cpu"></span></li>
+                <li><strong>메인보드: </strong><span id="bg-main"></span></li>
+                <li><strong>메모리: </strong> <span id="bg-memory"></span></li>
+                <li><strong>그래픽카드: </strong><span id="bg-graphic"></span></li>
+                <li><strong>파워: </strong><span id="bg-power"></span></li>
+                <li><strong>SSD: </strong><span id="bg-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="bg-reason"></span>
+          </div>
+        </div>
+
+        <!-- 견적 2 -->
+        <div class="quotation">
+          <h3>밸런스</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/밸런스.jpg" alt="밸런스 이미지" id="mid-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong><span id="ba-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="ba-main"></span></li>
+                <li><strong>메모리:</strong><span id="ba-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="ba-graphic"></span></li>
+                <li><strong>파워:</strong><span id="ba-power"></span></li>
+                <li><strong>SSD:</strong><span id="ba-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="ba-reason"></span>
+          </div>
+        </div>
+
+        <!-- 견적 3 -->
+        <div class="quotation">
+          <h3>고성능</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/고사양.jpg" alt="고사양 이미지" id="high-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong> <span id="hp-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="hp-main"></span></li>
+                <li><strong>메모리:</strong> <span id="hp-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="hp-graphic"></span></li>
+                <li><strong>파워:</strong><span id="hp-power"></span></li>
+                <li><strong>SSD:</strong><span id="hp-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="hp-reason"></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- 설정 모달 -->
     <div id="settings-modal" class="modal">
       <div class="modal-content">
@@ -57,6 +127,7 @@
     </div>
   </div>
 
+  
   <script type="module" src="popup.js"></script>
 </body>
 </html>
