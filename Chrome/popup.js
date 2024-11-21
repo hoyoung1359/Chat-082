@@ -2,7 +2,7 @@
 import { OPENAI_API_KEY } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  
+
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
   const startButton = document.getElementById('start-button');
@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
   const sendButton = document.getElementById('send-button');
+  const resultButton = document.getElementById('result-button'); // 필터 버튼
+
+  const applyButton = document.getElementById('apply-button'); // 필터 버튼
 
   function showStartScreen() {
     startScreen.style.display = 'flex';
@@ -54,16 +57,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function sendMessage() {
     const message = userInput.value.trim();
-    if (message) {
-      addMessage('user', message);
-      userInput.value = '';
 
-      if (message.includes("이미지") || message.includes("사진")) {
-        await getImageResponse(message);
-      } else {
-        await getAIResponse(message);
-      }
-    }
+        if (message) {
+            addMessage('user', message); // 사용자 메시지를 화면에 추가
+            userInput.value = ''; // 입력 필드를 비웁니다
+
+            try {
+                // FastAPI 서버에 POST 요청을 보냅니다
+                const response = await fetch('http://52.78.184.15:8000/chatbot/message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
+                        message: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
+                addMessage('assistant', data.message);
+
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('system', '서버와 통신 중 오류가 발생했습니다.');
+            }
+        }
   }
 
   function saveMessageToLocalStorage(sender, message, isImage) {
@@ -110,10 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
       addMessage('system', '이미지를 받아오는 중 오류가 발생했습니다.');
     }
   }
+  
 
 
   async function getAIResponse(userMessage) {
     const prompt =  `당신은 컴퓨터 구매를 돕는 전문가입니다. 조립용 컴퓨터 부품을 고르고 있는 구매자의 질문에 친절하고 알기쉽게 간단히 답변해주세요. 비유를 사용해도 좋습니다. 한 질문에 대한 답변은 너무 길지 않게 간단히 해주세요.`;
+    const filterDictionary = result.filterDictionary;
 
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -123,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-4", // 최신 모델로 변경
+          model: "gpt-3.5-turbo", // 최신 모델로 변경
           messages: [
             { role: "system", content: prompt },
             { role: "user", content: userMessage }
@@ -139,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
-      // 응답 데이터 구조 확인 후 메시지 추가
       if (data.choices && data.choices.length > 0 && data.choices[0].message) {
         const aiResponse = data.choices[0].message.content.trim();
         addMessage('assistant', aiResponse);
@@ -151,6 +177,84 @@ document.addEventListener('DOMContentLoaded', () => {
       addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
     }
   }
+
+  // async function getAIResponse(userMessage) {
+  //   chrome.storage.local.get("filterDictionary", async (result) => {
+  //     const filterDictionary = result.filterDictionary;
+  
+  //     if (!filterDictionary) {
+  //       console.log("No filter options found.");
+  //       return;
+  //     }
+  
+  //     // Define the prompt with the desired format
+  //     const prompt = `
+  //     현재 컴퓨터 부품 선택을 위한 필터 목록이 아래와 같습니다: ${JSON.stringify(filterDictionary)}
+  //     사용자의 질문에 맞는 적합한 필터를 선택하여 다음과 같은 형식으로 답변해 주세요:
+  //     response: 자연어 응답 내용
+  //     filter choice: { category: "카테고리 이름", label: "필터 라벨" }.
+  //     필터는 가능한 선택지 중 하나만 선택해 주세요.`;
+  
+  //     // Call the AI API
+  //     try {
+  //       const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${OPENAI_API_KEY}`
+  //         },
+  //         body: JSON.stringify({
+  //           model: "gpt-3.5-turbo",
+  //           messages: [
+  //             { role: "system", content: prompt },
+  //             { role: "user", content: userMessage }
+  //           ],
+  //           max_tokens: 300,
+  //           temperature: 0,
+  //         })
+  //       });
+  
+  //       const data = await response.json();
+  
+  //       // Check if we have a valid response
+  //       if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+  //         const aiResponse = data.choices[0].message.content.trim();
+  //         console.log("Raw AI Response:", aiResponse); // Log raw response
+  
+  
+  //         // Extract natural language response and structured filter choice
+  //         const responseMatch = aiResponse.match(/response:\s*(.*?)\s*filter choice:/s);
+  //         const filterMatch = aiResponse.match(/\{ category: "(.*?)", label: "(.*?)" \}/);
+  
+  //         if (responseMatch && filterMatch && filterMatch[1] && filterMatch[2]) {
+  //           const naturalResponse = responseMatch[1].trim();
+  //           const selectedFilter = { category: filterMatch[1], label: filterMatch[2] };
+  //           const selectedFilters = [selectedFilter]; // Wrap as array
+  
+  //           // Display the natural language response separately if desired
+  //           addMessage('assistant', naturalResponse);
+  //           addMessage('assistant', "필터 항목: " + `${selectedFilter.category} -> ${selectedFilter.label}`);
+  //           console.log("Parsed Selected Filter:", selectedFilters);
+  
+  //           // Store selectedFilters in Chrome storage for use in the applyButton
+  //           chrome.storage.local.set({ selectedFilters }, () => {
+  //             console.log("Selected filters saved to Chrome storage:", selectedFilters);
+  //           });
+  //         } else {
+  //           console.log("Failed to parse AI response. AI response:", aiResponse);
+  //           addMessage('system', 'AI 응답에서 필터 정보를 찾을 수 없습니다.');
+  //         }
+  //       } else {
+  //         console.log("Unexpected AI response format:", data);
+  //         addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
+  //       }
+  
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //       addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
+  //     }
+  //   });
+  // }
   
   function saveSettings() {
     const settings = {
@@ -209,36 +313,136 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsModal.style.display = 'none';
   });
 
-  applyButton.addEventListener('click', () => {
-    chrome.storage.local.get(["selectedFilters", "filterDictionary"], (result) => {
-      const selectedFilters = result.selectedFilters || [];
-      const filterDictionary = result.filterDictionary;
-  
-      // Map labels to IDs based on filterDictionary
-      const filterIdsToSelect = selectedFilters.map(filter => {
-        const options = filterDictionary[filter.category] || [];
-        const option = options.find(opt => opt.label === filter.label);
-        return option ? option.id : null;
-      }).filter(id => id !== null);
-  
-      // Send IDs to content script for automatic selection
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "applySelectedFilters", filterIds: filterIdsToSelect }, (response) => {
-          if (response && response.status === "Filter applied") {
-            console.log("Filter successfully applied.");
-
-            // Trigger the LLM to select the best item right after filter application
-            // Delay for 2 seconds before calling selectBestFilteredItem
-            setTimeout(() => {
-              selectBestFilteredItem();
-            }, 2000);
-          } else {
-            console.log("Failed to apply filter.");
-          }
-        });
-      });
-    });
+  ///////////////////////////////////// 견적서 관련 //////////////////////////////////////////
+  // "견적" 버튼 클릭 시 팝업 열기
+  document.getElementById('quotation-button').addEventListener('click', () => {
+    // Open the quotation.html popup
+    const popupWindow = window.open(
+      'quotation.html', // Path to your popup HTML
+      'Quotation Popup', // Popup window name
+      'width=800,height=600,resizable=no,scrollbars=yes'
+    );
   });
+
+  ///////////////////////////////////// 필터 관련 //////////////////////////////////////////
+  // quotation.html 팝업 열기 및 데이터 전달
+  document.getElementById('result-button').addEventListener('click', async () => {
+    try {
+        // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
+        const response1 = await fetch('http://52.78.184.15:8000/chatbot/generate-estimate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
+            })
+        });
+
+        if (!response1.ok) {
+            throw new Error(`HTTP error! status: ${response1.status}`);
+        }
+
+        const data = await response1.json();
+        addMessage('assistant', data["response"]["고성능"]["CPU"]);
+        
+        //document.getElementById('budget-memory').textContent = data["response"]["가성비"]["메모리"];
+        // quotation.html 팝업 창 열기
+        const popupWindow = window.open(
+            'quotation.html', // Path to your popup HTML
+            'Quotation Popup', // Popup window name
+            'width=800,height=600,resizable=no,scrollbars=yes'
+        );
+
+        // 팝업 창이 로드되었을 때 데이터를 전달합니다.
+        popupWindow.onload = function() {
+            popupWindow.postMessage(data.response, '*'); // FastAPI 응답 데이터를 전달
+        };
+        
+        document.getElementById('hcpu').textContent = data["response"]["고성능"]["CPU"];
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  });
+    
+    
+  //   resultButton.addEventListener('click', () => {
+  //       showResult();
+  //   });
+
+  // async function showResult(){
+  //     try {
+  //       // FastAPI 서버에 POST 요청을 보냅니다
+  //       const response = await fetch('http://52.78.184.15:8000/chatbot/generate-estimate', {
+  //           method: 'POST',
+  //           headers: {
+  //               'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify({
+  //               user_id: 'unique_user_id', // 사용자 ID (필요 시 동적으로 설정)
+  //           })
+  //       });
+
+  //       if (!response.ok) {
+  //           throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+        
+  //       // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
+  //       addMessage('assistant', data.message);
+
+  //   } catch (error) {
+  //       console.error('Error:', error);
+  //       addMessage('system', '서버와 통신 중 오류가 발생했습니다.');
+  //   }
+  //   }
+
+    // 크폼 저장소에서 filterDictionary 가져오기
+    chrome.storage.local.get("filterDictionary", (result) => {
+      const filterDictionary = result.filterDictionary;
+
+      if (filterDictionary) {
+        console.log("Filter options retrieved:", filterDictionary);
+        
+        // You can pass the filterDictionary to other functions here if needed
+      } else {
+        console.log("No filter options found.");
+      }
+  });
+
+
+
+  // applyButton.addEventListener('click', () => {
+  //   chrome.storage.local.get(["selectedFilters", "filterDictionary"], (result) => {
+  //     const selectedFilters = result.selectedFilters || [];
+  //     const filterDictionary = result.filterDictionary;
+  
+  //     // Map labels to IDs based on filterDictionary
+  //     const filterIdsToSelect = selectedFilters.map(filter => {
+  //       const options = filterDictionary[filter.category] || [];
+  //       const option = options.find(opt => opt.label === filter.label);
+  //       return option ? option.id : null;
+  //     }).filter(id => id !== null);
+  
+  //     // Send IDs to content script for automatic selection
+  //     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  //       chrome.tabs.sendMessage(tabs[0].id, { action: "applySelectedFilters", filterIds: filterIdsToSelect }, (response) => {
+  //         if (response && response.status === "Filter applied") {
+  //           console.log("Filter successfully applied.");
+
+  //           // Trigger the LLM to select the best item right after filter application
+  //           // Delay for 2 seconds before calling selectBestFilteredItem
+  //           setTimeout(() => {
+  //             selectBestFilteredItem();
+  //           }, 2000);
+  //         } else {
+  //           console.log("Failed to apply filter.");
+  //         }
+  //       });
+  //     });
+  //   });
+  // });
   
   async function selectBestFilteredItem() {
     console.log("Requesting item extraction...");
@@ -318,71 +522,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // applyButton.addEventListener('click', () => {
-  //   chrome.storage.local.get(["filterDictionary", "mainCategory"], (result) => {
-  //     const { filterDictionary, mainCategory } = result;
-      
-  //     if (filterDictionary && mainCategory) {
-  //       let selectedFilters = [];
-
-  //       // Adjust selected filters based on the main category
-  //       if (mainCategory === "CPU") {
-  //         selectedFilters = [
-  //           { category: "INTEL 모델명", label: "코어 i5" }
-  //         ];
-  //       } else if (mainCategory === "메인보드") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "MSI" }
-  //         ];
-  //       } else if (mainCategory === "메모리") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "삼성전자" }
-  //         ];
-  //       } else if (mainCategory === "그래픽카드") {
-  //         selectedFilters = [
-  //           { category: "RTX시리즈", label: "RTX4070" }
-  //         ];
-  //       } else if (mainCategory === "케이스") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "3RSYS" }
-  //         ];  
-  //       } else if (mainCategory === "파워") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "FSP" }
-  //         ];
-  //       } else if (mainCategory === "SSD") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "SK hynix" }
-  //         ];  
-  //       } else if (mainCategory === "CPU 쿨러") {
-  //         selectedFilters = [
-  //           { category: "제조사", label: "DEEPCOOL" }
-  //         ];  
-  //       } 
-        
-  //       // Map labels to IDs based on filterDictionary
-  //       const filterIdsToSelect = selectedFilters.map(filter => {
-  //         const options = filterDictionary[filter.category] || [];
-  //         const option = options.find(opt => opt.label === filter.label);
-  //         return option ? option.id : null;
-  //       }).filter(id => id !== null); // Remove any null entries
-  
-  //       // Send IDs to content script for automatic selection
-  //       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  //         chrome.tabs.sendMessage(tabs[0].id, { action: "applySelectedFilters", filterIds: filterIdsToSelect }, (response) => {
-  //           if (response && response.status === "Filter applied") {
-  //             console.log("Filter successfully applied.");
-  //           } else {
-  //             console.log("Failed to apply filter.");
-  //           }
-  //         });
-  //       });
-  //     } else {
-  //       console.log("No filter options found.");
-  //     }
-  //   });
-  // });
   loadSettings();
   // 페이지 로드 시 채팅 기록 불러오기
-  loadChatHistoryFromLocalStorage();
+  // loadChatHistoryFromLocalStorage();
 });
+
+
