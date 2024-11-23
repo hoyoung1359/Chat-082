@@ -90,7 +90,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
         return true; // 비동기 sendResponse 지원
       }
+
+    if (message.action === "extractItems") {
+        const items = [];
+        const rows = document.querySelectorAll("#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.pro_table > table > tbody > tr");
+
+        rows.forEach(row => {
+            const productNameElement = row.querySelector(".product_name p.ntMB14");
+            const priceElement = row.querySelector(".price > p:nth-of-type(2)");
+            const onclickAttr = productNameElement ? productNameElement.getAttribute("onclick") : "";
+            const productIdMatch = onclickAttr.match(/ProductNo=(\d+)/);
+            const productId = productIdMatch ? productIdMatch[1] : null;
+
+            if (productId && productNameElement && priceElement) {
+            const productName = productNameElement.textContent.trim();
+            const price = priceElement.textContent.trim();
+            items.push({ productId, productName, price });
+            }
+        });
+
+        sendResponse({ items });
+        return true; // 비동기 sendResponse 지원
+    }
   });
+
+// function extractItems() {
+//     const items = [];
+//     const rows = document.querySelectorAll("#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.pro_table > table > tbody > tr");
+    
+//     rows.forEach(row => {
+//         const productNameElement = row.querySelector(".product_name p.ntMB14");
+//         const ratingElement = row.querySelector(".star span");
+//         const reviewsElement = row.querySelector(".flex .spRB14:last-of-type");
+//         const priceElement = row.querySelector(".price > p:nth-of-type(2)");
+    
+//         // Extract ProductNo from onclick attribute
+//         const onclickAttr = productNameElement ? productNameElement.getAttribute("onclick") : "";
+//         const productIdMatch = onclickAttr.match(/ProductNo=(\d+)/);
+//         const productId = productIdMatch ? productIdMatch[1] : null;
+    
+//         // Check if all necessary elements are found in each row
+//         if (productId && productNameElement && ratingElement && reviewsElement && priceElement) {
+//             const productName = productNameElement.textContent.trim();
+//             // const rating = ratingElement.style.width; // Rating percentage width (e.g., "98%")
+//             // const reviews = reviewsElement.textContent.trim();
+//             const price = priceElement.textContent.trim();
+            
+//             const item = {
+//                 productId,
+//                 productName,
+//                 // rating,
+//                 // reviews,
+//                 price
+//             };
+//             items.push(item)
+//         }
+//     });
+    
+
+//     return items;
+// }
 
 ////////////////////////////////////////////////// 자동 클릭  /////////////////////////////////////////////////////////////////////////////////////////////////////////
   

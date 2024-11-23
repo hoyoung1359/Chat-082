@@ -448,45 +448,61 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const menuItems = Object.entries(input["가성비"]); //  #TODO 사용자 선택으로 교체
   let currentIndex = 0;
+  const extractedData = {}; // 저장할 딕셔너리
   
   const processInputs = (tabId) => {
     if (currentIndex < menuItems.length) {
       const [key, { upperCategory, value }] = menuItems[currentIndex];
   
       // 첫 번째 요청: 메뉴 클릭
-      chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => { // 부품 클릭
+      chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
         if (menuResponse && menuResponse.success) {
           setTimeout(() => {
             // 두 번째 요청: 상위 카테고리 클릭
-            chrome.tabs.sendMessage(tabId, { action: "clickUpperCategory", upperCategory }, (upperResponse) => { // 상위 필터 클릭 
+            chrome.tabs.sendMessage(tabId, { action: "clickUpperCategory", upperCategory }, (upperResponse) => {
               if (upperResponse && upperResponse.success) {
                 setTimeout(() => {
                   // 세 번째 요청: 값 클릭
-                  chrome.tabs.sendMessage(tabId, { action: "clickValue", value }, (valueResponse) => { // 세부 시리즈 클릭 
+                  chrome.tabs.sendMessage(tabId, { action: "clickValue", value }, (valueResponse) => {
                     if (valueResponse && valueResponse.success) {
                       setTimeout(() => {
                         // 네 번째 요청: 버튼 클릭
-                        chrome.tabs.sendMessage(
-                          tabId,
-                          { action: "clickButton"}, // 맞춤 추천 버튼 끄기
-                          (buttonResponse) => {
-                            if (buttonResponse && buttonResponse.success) {
-                              currentIndex++; // 다음 입력 처리
-                              setTimeout(() => processInputs(tabId), 2000); // 2초 대기 후 다음 처리
-                            }
+                        chrome.tabs.sendMessage(tabId, { action: "clickButton" }, (buttonResponse) => {
+                          if (buttonResponse && buttonResponse.success) {
+                            setTimeout(() => {
+                              // 다섯 번째 요청: 아이템 추출
+                              chrome.tabs.sendMessage(tabId, { action: "extractItems" }, (itemsResponse) => {
+                                if (itemsResponse && itemsResponse.items) {
+                                  // 필터링 된 데이터를 저장
+                                  extractedData[key] = {};
+                                  itemsResponse.items.forEach((item, index) => {
+                                    extractedData[key][`${item.productId}-${index + 1}`] = {
+                                      productName: item.productName,
+                                      price: item.price,
+                                    };
+                                  });
+  
+                                  console.log(`Extracted items for ${key}:`, extractedData[key]);
+                                }
+  
+                                currentIndex++; // 다음 입력 처리
+                                setTimeout(() => processInputs(tabId), 2000); // 2초 대기 후 다음 처리
+                              });
+                            }, 2000); // 버튼 클릭 후 2초 대기
                           }
-                        );
-                      }, 2000); // 클릭 후 2초 대기
+                        });
+                      }, 2000); // 값 클릭 후 2초 대기
                     }
                   });
-                }, 2000); // 클릭 후 2초 대기
+                }, 2000); // 상위 카테고리 클릭 후 2초 대기
               }
             });
-          }, 2000); // 클릭 후 2초 대기
+          }, 2000); // 메뉴 클릭 후 2초 대기
         }
       });
     } else {
       console.log("모든 작업이 완료되었습니다.");
+      console.log("최종 추출된 데이터:", extractedData);
       currentIndex = 0; // 모든 작업 완료 시 초기화
     }
   };
@@ -508,30 +524,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 ////////////////////////////////////////////////// 아이템 긁는 부분 ////////////////////////////////////////////////////////
-async function selectBestFilteredItem() {
-  console.log("Requesting item extraction...");
+// async function selectBestFilteredItem() {
+//   console.log("Requesting item extraction...");
 
-  // Send a message to content.js to extract items
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action: "extractItems" }, async (items) => {
-      if (!items || items.length === 0) {
-        console.log("No items found after filtering.");
-        return;
-      }
+//   // Send a message to content.js to extract items
+//   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+//     chrome.tabs.sendMessage(tabs[0].id, { action: "extractItems" }, async (items) => {
+//       if (!items || items.length === 0) {
+//         console.log("No items found after filtering.");
+//         return;
+//       }
 
-      console.log("Extracted Items:", items);
+//       console.log("Extracted Items:", items);
 
-      // Get the best item ID using the getBestItemId function
-      const bestItemProductId = await getBestItemId(items);
-      if (bestItemProductId) {
-        console.log("Best Item Product ID selected:", bestItemProductId);
+//       // Get the best item ID using the getBestItemId function
+//       const bestItemProductId = await getBestItemId(items);
+//       if (bestItemProductId) {
+//         console.log("Best Item Product ID selected:", bestItemProductId);
 
-        // Request content script to click the "담기" button for the selected item
-        chrome.tabs.sendMessage(tabs[0].id, { action: "addItemToCart", productId: bestItemProductId });
-      }
-    });
-  });
-}
+//         // Request content script to click the "담기" button for the selected item
+//         chrome.tabs.sendMessage(tabs[0].id, { action: "addItemToCart", productId: bestItemProductId });
+//       }
+//     });
+//   });
+// }
 
 //   // 필터링 후 아이템 선택을 위한 함수 
 //   async function getBestItemId(items) {
