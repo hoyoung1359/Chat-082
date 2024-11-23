@@ -3,6 +3,8 @@ import { OPENAI_API_KEY } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  const addr = "43.202.99.126:8000";
+
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
   const resultScreen = document.getElementById('result-screen');
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const purposeInput = document.getElementById('purpose');
   const budgetInput = document.getElementById('budget');
   const userID = document.getElementById('userID')
-  
+  const menus = ["CPU", "메인보드", "메모리", "그래픽카드", "파워", "SSD"]
   
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // FastAPI 서버에 POST 요청을 보냅니다
-                const response = await fetch('http://43.202.99.126:8000/chatbot/message', {
+                const response = await fetch(`http://${addr}/chatbot/message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -336,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const user_id = userID.value
         // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
-        const response1 = await fetch('http://43.202.99.126:8000/chatbot/generate-estimate', {
+        const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -431,16 +433,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   });
 
-  ////////////////////////////////////////////////// 자동 클릭  //////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////// 견적서 3개 중에 하나 선택하는 함수  //////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////// 자동 클릭 및 긁은 아이템 백으로 보내기  //////////////////////////////////////////////////////////////////////
   const tempButton = document.getElementById("temp-button");
+
+  // Temp 버튼 클릭 이벤트
+  tempButton.addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tabId = tabs[0].id;
+      processInputs(tabId); // 입력 처리 시작
+    });
+  });
 
   // 샘플 인풋, #TODO 사용자 선택 격적으로 추후 출력으로 교체
   const input = {
     "가성비": {
       "CPU": { upperCategory: "AMD 모델명", value: "라이젠5" },
+      "메인보드": { upperCategory: "칩셋종류", value: "AMD-B450" },
       "메모리": { upperCategory: "메모리용량", value: "16GB" },
       "그래픽카드": { upperCategory: "RTX시리즈", value: "RTX3060" },
-      "메인보드": { upperCategory: "칩셋종류", value: "AMD-B450" },
       "SSD": { upperCategory: "용량", value: "480~512GB" },
       "파워": { upperCategory: "테스트(정격)출력", value: "400~499W" },
     },
@@ -451,8 +464,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const extractedData = {}; // 저장할 딕셔너리
   
   const processInputs = (tabId) => {
-    if (currentIndex < menuItems.length) {
-      const [key, { upperCategory, value }] = menuItems[currentIndex];
+    if (currentIndex < menus.length) {
+      const key = menus[currentIndex]; // 현재 메뉴
+      const { upperCategory, value } = input["가성비"][key];
   
       // 첫 번째 요청: 메뉴 클릭
       chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
@@ -503,22 +517,118 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       console.log("모든 작업이 완료되었습니다.");
       console.log("최종 추출된 데이터:", extractedData);
-      currentIndex = 0; // 모든 작업 완료 시 초기화
+      currentIndex = 0; // 처리 완료 후 인덱스 초기화
+
+      const user_id = userID.value
+
+      // 추출된 데이터를 백엔드로 전송
+      sendPartsData(user_id, extractedData)
+        .then((response) => {
+          if (response.error) {
+            console.error("백엔드 에러:", response.error);
+          } else {
+            console.log("선택 결과:", response);
+            backendResponse = response; // 백엔드 응답 저장
+            currentIndex = 0; // 처리 완료 후 인덱스 초기화
+            processSearch(tabId); // 검색 프로세스 시작
+          }
+        })
+        .catch((err) => {
+          console.error("예상치 못한 에러:", err);
+        });
+
+       // 아이템 담기
+      processSearch(tabId, test_input)
     }
   };
   
-  // Temp 버튼 클릭 이벤트
-  tempButton.addEventListener("click", () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tabId = tabs[0].id;
-      processInputs(tabId); // 입력 처리 시작
-    });
-  });
-  ////////////////////////////////////////////////// 자동 클릭  //////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////// 아이템 보내고 담을 아이템 받는 api //////////////////////////////////////////////////////////////////////
+  // 백엔드로 데이터를 전송하는 함수
+  async function sendPartsData(userId, partsData) {
+    const backendUrl = `http://${addr}/chatbot/select-parts`; // #TODO: addr을 실제 서버 주소로 설정
+
+    try {
+      // POST 요청으로 데이터 전송
+      const response = await fetch(backendUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId, // 사용자 ID
+          parts_data: partsData, // 부품 데이터
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log("백엔드 성공:", result);
+        return result; // 성공적으로 응답 반환
+      } else {
+        console.error("백엔드 에러:", result);
+        return { error: "백엔드에서 유효한 응답을 받지 못했습니다." };
+      }
+    } catch (error) {
+      console.error("백엔드 호출 중 에러:", error);
+      return { error: "백엔드와 통신 중 에러가 발생했습니다." };
+    }
+  }
+
+
+  ////////////////////////////////////////////////// 자동 클릭 및 선택된 아이템 담기  //////////////////////////////////////////////////////////////////////
+  const processSearch = (tabId, searchInput) => {
+    const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
+  
+    let searchIndex = 0; // 현재 검색 중인 인덱스
+  
+    const processPartSearch = () => {
+      if (searchIndex < responseEntries.length) {
+        const key = menus[searchIndex]; // 현재 메뉴
+        const productName = responseEntries.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
+  
+        // 첫 번째 요청: 메뉴 클릭
+        chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
+          if (menuResponse && menuResponse.success) {
+            setTimeout(() => {
+              // 두 번째 요청: 검색 박스에 제품 이름 입력 및 검색 버튼 클릭
+              chrome.tabs.sendMessage(tabId, { action: "searchProduct", productName }, (searchResponse) => {
+                if (searchResponse && searchResponse.success) {
+                  setTimeout(() => {
+                    // 세 번째 요청: 제품 목록에서 "담기" 버튼 클릭
+                    chrome.tabs.sendMessage(tabId, { action: "clickAddButton", productName }, (addButtonResponse) => {
+                      if (addButtonResponse && addButtonResponse.success) {
+                        console.log(`${key}: '${productName}' 담기 성공`);
+                        searchIndex++; // 다음 파트로 이동
+                        setTimeout(processPartSearch, 2000); // 2초 대기 후 다음 처리
+                      } else {
+                        console.error(`${key}: '${productName}' 담기 실패`);
+                      }
+                    });
+                  }, 2000); // 검색 후 2초 대기
+                } else {
+                  console.error(`${key}: '${productName}' 검색 실패`);
+                }
+              });
+            }, 2000); // 메뉴 클릭 후 2초 대기
+          }
+        });
+      } else {
+        console.log("모든 검색 작업 완료");
+        searchIndex = 0; // 검색 인덱스 초기화
+      }
+    };
+  
+    processPartSearch(); // 첫 번째 검색 시작
+  };
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   loadSettings();
-//   // 페이지 로드 시 채팅 기록 불러오기
-//   // loadChatHistoryFromLocalStorage();
+  // 페이지 로드 시 채팅 기록 불러오기
+  // loadChatHistoryFromLocalStorage();
 });
 
 

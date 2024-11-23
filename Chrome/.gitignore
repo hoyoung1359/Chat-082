@@ -1,1 +1,5 @@
 config.js
+.DS_Store
+Chrome/.DS_Store
+backup_content.txt
+note.txt

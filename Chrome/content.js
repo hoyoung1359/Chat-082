@@ -5,6 +5,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const menuSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.top_list > ul";
     const filterSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.lt_menu > ul";
     const buttonSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.mid_table.flex.btwn > div:nth-child(2) > div";
+    const searchBoxSelector = "#schProductName"; // 검색 박스
+    const searchButtonSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.top_table.flex.btwn > div:nth-child(2) > div > span.search_box > button";
+    const productRowSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.pro_table > table > tbody > tr";
+    
   
     if (message.action === "clickMenu") {
       // 메뉴 클릭 처리
@@ -112,44 +116,40 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ items });
         return true; // 비동기 sendResponse 지원
     }
-  });
 
-// function extractItems() {
-//     const items = [];
-//     const rows = document.querySelectorAll("#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.pro_table > table > tbody > tr");
+    if (message.action === "searchProduct") {
+        const searchBox = document.querySelector(searchBoxSelector);
+        const searchButton = document.querySelector(searchButtonSelector);
     
-//     rows.forEach(row => {
-//         const productNameElement = row.querySelector(".product_name p.ntMB14");
-//         const ratingElement = row.querySelector(".star span");
-//         const reviewsElement = row.querySelector(".flex .spRB14:last-of-type");
-//         const priceElement = row.querySelector(".price > p:nth-of-type(2)");
-    
-//         // Extract ProductNo from onclick attribute
-//         const onclickAttr = productNameElement ? productNameElement.getAttribute("onclick") : "";
-//         const productIdMatch = onclickAttr.match(/ProductNo=(\d+)/);
-//         const productId = productIdMatch ? productIdMatch[1] : null;
-    
-//         // Check if all necessary elements are found in each row
-//         if (productId && productNameElement && ratingElement && reviewsElement && priceElement) {
-//             const productName = productNameElement.textContent.trim();
-//             // const rating = ratingElement.style.width; // Rating percentage width (e.g., "98%")
-//             // const reviews = reviewsElement.textContent.trim();
-//             const price = priceElement.textContent.trim();
-            
-//             const item = {
-//                 productId,
-//                 productName,
-//                 // rating,
-//                 // reviews,
-//                 price
-//             };
-//             items.push(item)
-//         }
-//     });
-    
+        if (searchBox && searchButton) {
+          searchBox.value = message.productName; // 검색 박스에 값 입력
+          searchButton.click(); // 검색 버튼 클릭
+          sendResponse({ success: true });
+        } else {
+          sendResponse({ success: false });
+        }
+        return true;
+      }
 
-//     return items;
-// }
+    if (message.action === "clickAddButton") {
+        const rows = document.querySelectorAll(productRowSelector);
+
+        let success = false;
+        rows.forEach((row) => {
+        const productNameElement = row.querySelector(".product_name p.ntMB14");
+        const addButton = row.querySelector("button.bl_btn"); // "담기" 버튼 동적 탐색
+
+        // 제품 이름이 일치하면 "담기" 버튼 클릭
+        if (productNameElement && productNameElement.textContent.trim() === message.productName && addButton) {
+            addButton.click();
+            success = true;
+        }
+        });
+
+        sendResponse({ success });
+        return true; // 비동기 응답 지원
+    }
+});
 
 ////////////////////////////////////////////////// 자동 클릭  /////////////////////////////////////////////////////////////////////////////////////////////////////////
   
