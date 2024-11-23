@@ -14,6 +14,9 @@
     <div id="sidebar">
       <button id="home-button"><i class="fas fa-home"></i></button>
       <button id="settings-button"><i class="fas fa-cog"></i></button>
+      <button id="quotation-button"><i class="fas fa-desktop"></i></button>   
+      <button id="back-button"><i class="fas fa-chevron-left"></i></button>
+      <button id="temp-button">TMP</button>  <!-- #TODO, 나중에 지워야 된다 -->
       
     </div>
 
@@ -27,6 +30,7 @@
       </div>
     </div>
 
+
     <!-- 채팅 화면 -->
     <div id="chat-container" style="display: none;">
       <div id="chat-header">
@@ -36,6 +40,80 @@
       <div id="input-container">
         <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
         <button id="send-button">전송</button>
+        <!-- 필터 적용 버튼 -->
+        <button id="result-button">견적뽑기</button>
+      </div>
+    </div>
+
+    <div id="result-screen" style="display: none;">
+      <div id="quotations-container">
+      
+      <!-- <button id="back-button">뒤로가기</button> -->
+
+
+        <!-- 견적 1 -->
+        <div class="quotation">
+          <h3>가성비</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/저사양.jpg" alt="저사양 이미지" id="low-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU: </strong><span id="bg-cpu"></span></li>
+                <li><strong>메인보드: </strong><span id="bg-main"></span></li>
+                <li><strong>메모리: </strong> <span id="bg-memory"></span></li>
+                <li><strong>그래픽카드: </strong><span id="bg-graphic"></span></li>
+                <li><strong>파워: </strong><span id="bg-power"></span></li>
+                <li><strong>SSD: </strong><span id="bg-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="bg-reason"></span>
+          </div>
+        </div>
+
+        <!-- 견적 2 -->
+        <div class="quotation">
+          <h3>밸런스</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/밸런스.jpg" alt="밸런스 이미지" id="mid-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong><span id="ba-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="ba-main"></span></li>
+                <li><strong>메모리:</strong><span id="ba-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="ba-graphic"></span></li>
+                <li><strong>파워:</strong><span id="ba-power"></span></li>
+                <li><strong>SSD:</strong><span id="ba-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="ba-reason"></span>
+          </div>
+        </div>
+
+        <!-- 견적 3 -->
+        <div class="quotation">
+          <h3>고성능</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/고사양.jpg" alt="고사양 이미지" id="high-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong> <span id="hp-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="hp-main"></span></li>
+                <li><strong>메모리:</strong> <span id="hp-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="hp-graphic"></span></li>
+                <li><strong>파워:</strong><span id="hp-power"></span></li>
+                <li><strong>SSD:</strong><span id="hp-ssd"></span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="reason">
+            <strong>이유:</strong> <span id="hp-reason"></span>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -43,6 +121,8 @@
     <div id="settings-modal" class="modal">
       <div class="modal-content">
         <h2>설정</h2>
+        <label for="purpose">아이디:</label>
+        <input type="text" id="userID" name="userID">
         <label for="purpose">사용 목적:</label>
         <input type="text" id="purpose" name="purpose">
         <label for="budget">예산:</label>
@@ -53,8 +133,7 @@
     </div>
   </div>
 
-  </div>
-
+  
   <script type="module" src="popup.js"></script>
 </body>
 </html>

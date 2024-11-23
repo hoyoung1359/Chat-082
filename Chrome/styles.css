@@ -15,7 +15,7 @@
 }
 
 
-#home-button, #settings-button {
+#home-button, #settings-button, #quotation-button, #back-button {
   width: 50px;
   height: 50px;
   background-color: #c46554c0;
@@ -31,7 +31,7 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-#home-button:hover, #settings-button:hover {
+#home-button:hover, #settings-button:hover, #quotation-button:hover, #back-button:hover {
   background-color: #0066cc;
   color: white;
 }
@@ -177,6 +177,22 @@ body {
   background-color: #0066cc;
 }
 
+#result-button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #0084ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+#result-button:hover {
+  background-color: #0066cc;
+}
+
 /* 스크롤바 스타일링 */
 #chat-messages::-webkit-scrollbar {
   width: 6px;
@@ -247,12 +263,12 @@ body {
   background-color: #0066cc;
 }
 
-#close-settings {
+#close-settings, #close-quotation {
   background-color: #ccc;
   margin-left: 10px;
 }
 
-#close-settings:hover {
+#close-settings:hover, #close-quotation:hover {
   background-color: #999;
 }
 
@@ -265,5 +281,153 @@ body {
   }
   #start-screen {
     width: 100%;
+  }
+}
+
+/****************************** 견적서 html css ******************************/
+/* Quotation popup container */
+#quotation-popup-container {
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Title for the quotation popup */
+#quotation-popup-container h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Quotations container */
+#quotations-container {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */ 
+  gap: 20px; /* Add spacing between quotations */
+  margin-top: 20px;
+}
+
+/* Individual Quotation Block */
+.quotation {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.quotation:hover {
+  transform: translateY(-10px); /* Slight hover effect */
+}
+
+/* 제목 스타일 */
+.quotation h3 {
+  margin: 0 0 15px 0; /* 제목과 아래 내용 간격 */
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center; /* 왼쪽 정렬 */
+}
+
+/* 이미지와 텍스트 정렬 */
+.quotation-content {
+
+  display: flex;
+  align-items: flex-start; /* 텍스트와 이미지의 위쪽 정렬 */
+  gap: 20px; /* 이미지와 텍스트 간격 */
+}
+
+/* Image placeholder */
+.image-placeholder {
+  width: 150px;
+  height: 150px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.image-placeholder img {
+  max-width: 100%; /* 이미지가 placeholder의 너비를 넘지 않도록 설정 */
+  max-height: 100%; /* 이미지가 placeholder의 높이를 넘지 않도록 설정 */
+  object-fit: cover; /* 이미지 비율을 유지하며 placeholder에 맞추기 */
+  border-radius: inherit; /* 부모의 border-radius를 상속 */
+}
+
+/* 세부 정보 리스트 */
+.details {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.details li {
+  margin-bottom: 5px; /* 항목 간의 간격 */
+}
+
+.details strong {
+  color: #333;
+}
+
+.reason {
+  margin-top: 15px; /* 리스트와 이유 항목 사이 간격 */
+  font-size: 0.95rem; /* 이유 텍스트 크기 */
+  color: #555; /* 이유 텍스트 색상 */
+}
+
+.reason strong {
+  color: #333; /* "이유:" 강조 */
+}
+
+/* Close button */
+#close-popup {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #db4a2b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#close-popup:hover {
+  background-color: #b4321f;
+}
+
+/* Scrollbars for small popups */
+#quotation-popup-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#quotation-popup-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#quotation-popup-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+#quotation-popup-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive design for popup */
+@media (max-width: 600px) {
+  #quotations-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quotation {
+    width: 100%; /* Take full width on small screens */
   }
 }
