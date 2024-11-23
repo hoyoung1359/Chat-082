@@ -420,6 +420,13 @@ body {
   background: #555;
 }
 
+/* Add this to your CSS file */
+.quotation.selected {
+  border: 2px solid #007BFF; /* Highlight with a blue border */
+  background-color: #f0f8ff; /* Light blue background */
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
 /* Responsive design for popup */
 @media (max-width: 600px) {
   #quotations-container {
