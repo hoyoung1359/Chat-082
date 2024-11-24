@@ -56,78 +56,6 @@
       </div>
     </div>
 
-    <div id="result-screen" style="display: none;">
-      <div id="quotations-container">
-      
-      <!-- <button id="back-button">뒤로가기</button> -->
-
-
-        <!-- 견적 1 -->
-        <div class="quotation">
-          <h3>가성비</h3>
-          <div class="quotation-content">
-            <div class="image-placeholder"><img src="images/저사양.jpg" alt="저사양 이미지" id="low-image"></div>
-            <div class="details-container">
-              <ul class="details">
-                <li><strong>CPU: </strong><span id="bg-cpu"></span></li>
-                <li><strong>메인보드: </strong><span id="bg-main"></span></li>
-                <li><strong>메모리: </strong> <span id="bg-memory"></span></li>
-                <li><strong>그래픽카드: </strong><span id="bg-graphic"></span></li>
-                <li><strong>파워: </strong><span id="bg-power"></span></li>
-                <li><strong>SSD: </strong><span id="bg-ssd"></span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="reason">
-            <strong>이유:</strong> <span id="bg-reason"></span>
-          </div>
-        </div>
-
-        <!-- 견적 2 -->
-        <div class="quotation">
-          <h3>밸런스</h3>
-          <div class="quotation-content">
-            <div class="image-placeholder"><img src="images/밸런스.jpg" alt="밸런스 이미지" id="mid-image"></div>
-            <div class="details-container">
-              <ul class="details">
-                <li><strong>CPU:</strong><span id="ba-cpu"></span></li>
-                <li><strong>메인보드:</strong><span id="ba-main"></span></li>
-                <li><strong>메모리:</strong><span id="ba-memory"></span></li>
-                <li><strong>그래픽카드:</strong><span id="ba-graphic"></span></li>
-                <li><strong>파워:</strong><span id="ba-power"></span></li>
-                <li><strong>SSD:</strong><span id="ba-ssd"></span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="reason">
-            <strong>이유:</strong> <span id="ba-reason"></span>
-          </div>
-        </div>
-
-        <!-- 견적 3 -->
-        <div class="quotation">
-          <h3>고성능</h3>
-          <div class="quotation-content">
-            <div class="image-placeholder"><img src="images/고사양.jpg" alt="고사양 이미지" id="high-image"></div>
-            <div class="details-container">
-              <ul class="details">
-                <li><strong>CPU:</strong> <span id="hp-cpu"></span></li>
-                <li><strong>메인보드:</strong><span id="hp-main"></span></li>
-                <li><strong>메모리:</strong> <span id="hp-memory"></span></li>
-                <li><strong>그래픽카드:</strong><span id="hp-graphic"></span></li>
-                <li><strong>파워:</strong><span id="hp-power"></span></li>
-                <li><strong>SSD:</strong><span id="hp-ssd"></span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="reason">
-            <strong>이유:</strong> <span id="hp-reason"></span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
     <!-------------------------------------------------------------------- 모달 --------------------------------------------------------------------->
     <!-- 설정 모달 -->
     <div id="settings-modal" class="modal">
@@ -146,26 +74,114 @@
 
     <!-- 견적 Modal -->
     <div id="quotation-modal" class="modal">
+      <button class="close-button">&times;</button>
+      <h3>추천 견적</h3>
+      <div id="quotation-container">
+        <div id="placeholder-message" style="text-align: center; margin-top: 20px;">
+          <img src="images/cry.png" alt="No Data" />
+          <p>아직 추천 받은 견적이 없어요 ㅠㅠ</p>
+      </div>
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" style="display: none; text-align: center; margin: 20px;">
+          <img src="images/loading.gif" alt="Loading..." />
+          <p id="loading-text" style="margin-top: 10px;">Loading...</p>
+        </div>
+        <!-- 견적 1 -->
+        <div class="quotation">
+          <h3>가성비</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/저사양.jpg" alt="저사양 이미지" id="low-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU: </strong><span id="bg-cpu"></span></li>
+                <li><strong>메인보드: </strong><span id="bg-main"></span></li>
+                <li><strong>메모리: </strong> <span id="bg-memory"></span></li>
+                <li><strong>그래픽카드: </strong><span id="bg-graphic"></span></li>
+                <li><strong>파워: </strong><span id="bg-power"></span></li>
+                <li><strong>SSD: </strong><span id="bg-ssd"></span></li>
+                <strong>이유:</strong> <span id="bg-reason"></span>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 견적 2 -->
+        <div class="quotation">
+          <h3>밸런스</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/밸런스.jpg" alt="밸런스 이미지" id="mid-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong><span id="ba-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="ba-main"></span></li>
+                <li><strong>메모리:</strong><span id="ba-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="ba-graphic"></span></li>
+                <li><strong>파워:</strong><span id="ba-power"></span></li>
+                <li><strong>SSD:</strong><span id="ba-ssd"></span></li>
+                <strong>이유:</strong> <span id="bg-reason"></span>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 견적 3 -->
+        <div class="quotation">
+          <h3>고성능</h3>
+          <div class="quotation-content">
+            <div class="image-placeholder"><img src="images/고사양.jpg" alt="고사양 이미지" id="high-image"></div>
+            <div class="details-container">
+              <ul class="details">
+                <li><strong>CPU:</strong> <span id="hp-cpu"></span></li>
+                <li><strong>메인보드:</strong><span id="hp-main"></span></li>
+                <li><strong>메모리:</strong> <span id="hp-memory"></span></li>
+                <li><strong>그래픽카드:</strong><span id="hp-graphic"></span></li>
+                <li><strong>파워:</strong><span id="hp-power"></span></li>
+                <li><strong>SSD:</strong><span id="hp-ssd"></span></li>
+                <strong>이유:</strong> <span id="bg-reason"></span>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  
 
     <!-- Component Modal -->
     <!-- CPU Modal -->
-    <div id="cpu-modal" class="component-modal"></div>
+    <div id="cpu-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
     <!-- 메인보드 Modal -->
-    <div id="mainboard-modal" class="component-modal"></div>
+    <div id="mainboard-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
     <!-- 메모리 Modal -->
-    <div id="memory-modal" class="component-modal"></div>
+    <div id="memory-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
     <!-- GPU Modal -->
-    <div id="gpu-modal" class="component-modal"></div>
+    <div id="gpu-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
     <!-- 파워 Modal -->
-    <div id="power-modal" class="component-modal"></div>
+    <div id="power-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
     <!-- SSD Modal -->
-    <div id="ssd-modal" class="component-modal"></div>
+    <div id="ssd-modal" class="component-modal">
+      <button class="close-button">&times;</button>
+
+    </div>
 
 
   </div>
@@ -174,3 +190,79 @@
   <script type="module" src="popup.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+<!-- 
+
+<div id="result-screen" style="display: none;">
+  <div id="quotations-container">
+  <button id="back-button">뒤로가기</button>
+
+
+    <div class="quotation">
+      <h3>가성비</h3>
+      <div class="quotation-content">
+        <div class="image-placeholder"><img src="images/저사양.jpg" alt="저사양 이미지" id="low-image"></div>
+        <div class="details-container">
+          <ul class="details">
+            <li><strong>CPU: </strong><span id="bg-cpu"></span></li>
+            <li><strong>메인보드: </strong><span id="bg-main"></span></li>
+            <li><strong>메모리: </strong> <span id="bg-memory"></span></li>
+            <li><strong>그래픽카드: </strong><span id="bg-graphic"></span></li>
+            <li><strong>파워: </strong><span id="bg-power"></span></li>
+            <li><strong>SSD: </strong><span id="bg-ssd"></span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="reason">
+        <strong>이유:</strong> <span id="bg-reason"></span>
+      </div>
+    </div>
+
+    <div class="quotation">
+      <h3>밸런스</h3>
+      <div class="quotation-content">
+        <div class="image-placeholder"><img src="images/밸런스.jpg" alt="밸런스 이미지" id="mid-image"></div>
+        <div class="details-container">
+          <ul class="details">
+            <li><strong>CPU:</strong><span id="ba-cpu"></span></li>
+            <li><strong>메인보드:</strong><span id="ba-main"></span></li>
+            <li><strong>메모리:</strong><span id="ba-memory"></span></li>
+            <li><strong>그래픽카드:</strong><span id="ba-graphic"></span></li>
+            <li><strong>파워:</strong><span id="ba-power"></span></li>
+            <li><strong>SSD:</strong><span id="ba-ssd"></span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="reason">
+        <strong>이유:</strong> <span id="ba-reason"></span>
+      </div>
+    </div>
+
+    <div class="quotation">
+      <h3>고성능</h3>
+      <div class="quotation-content">
+        <div class="image-placeholder"><img src="images/고사양.jpg" alt="고사양 이미지" id="high-image"></div>
+        <div class="details-container">
+          <ul class="details">
+            <li><strong>CPU:</strong> <span id="hp-cpu"></span></li>
+            <li><strong>메인보드:</strong><span id="hp-main"></span></li>
+            <li><strong>메모리:</strong> <span id="hp-memory"></span></li>
+            <li><strong>그래픽카드:</strong><span id="hp-graphic"></span></li>
+            <li><strong>파워:</strong><span id="hp-power"></span></li>
+            <li><strong>SSD:</strong><span id="hp-ssd"></span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="reason">
+        <strong>이유:</strong> <span id="hp-reason"></span>
+      </div>
+    </div>
+
+  </div>
+ -->
