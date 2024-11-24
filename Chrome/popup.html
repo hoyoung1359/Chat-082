@@ -12,10 +12,21 @@
 
     <!-- 사이드바 추가 -->
     <div id="sidebar">
+      <!-- 견적 버튼 -->
+      <button id="quotation-button"><img src="images/computer.png" alt="CPU" /><div class="info-box">견적</div></button>   
+
+      <!-- 부품 버튼 -->
+      <button id="cpu-button" title="CPU"><img src="images/cpu.png" alt="CPU" /><div class="info-box">CPU</div></button>
+      <button id="mainboard-button" title="메인보드"><img src="images/motherboard.png" alt="메인보드" /><div class="info-box">메인보드</div></button>
+      <button id="memory-button" title="메모리"><img src="images/ram.png" alt="메모리" /><div class="info-box">메모리</div></button>
+      <button id="gpu-button" title="그래픽카드"><img src="images/graphics_card.png" alt="그래픽카드" /><div class="info-box">그래픽카드</div></button>
+      <button id="power-button" title="파워"><img src="images/power.png" alt="파워" /><div class="info-box">파워</div></button>
+      <button id="ssd-button" title="SSD"><img src="images/ssd.png" alt="SSD" /><div class="info-box">SSD</div></button>
+      
+      <!-- 홈, 설정 버튼 -->
+      <!-- <button id="back-button"><i class="fas fa-chevron-left"></i></button> -->
+      <button id="settings-button"><img src="images/setting.png" alt="setting" /><div class="info-box">설정</div></button>
       <button id="home-button"><i class="fas fa-home"></i></button>
-      <button id="settings-button"><i class="fas fa-cog"></i></button>
-      <button id="quotation-button"><i class="fas fa-desktop"></i></button>   
-      <button id="back-button"><i class="fas fa-chevron-left"></i></button>
       <button id="temp-button">TMP</button>  <!-- #TODO, 나중에 지워야 된다 -->
       
     </div>
@@ -117,6 +128,7 @@
       </div>
     </div>
 
+    <!-------------------------------------------------------------------- 모달 --------------------------------------------------------------------->
     <!-- 설정 모달 -->
     <div id="settings-modal" class="modal">
       <div class="modal-content">
@@ -131,6 +143,31 @@
         <button id="close-settings">닫기</button>
       </div>
     </div>
+
+    <!-- 견적 Modal -->
+    <div id="quotation-modal" class="modal">
+    </div>
+
+    <!-- Component Modal -->
+    <!-- CPU Modal -->
+    <div id="cpu-modal" class="component-modal"></div>
+
+    <!-- 메인보드 Modal -->
+    <div id="mainboard-modal" class="component-modal"></div>
+
+    <!-- 메모리 Modal -->
+    <div id="memory-modal" class="component-modal"></div>
+
+    <!-- GPU Modal -->
+    <div id="gpu-modal" class="component-modal"></div>
+
+    <!-- 파워 Modal -->
+    <div id="power-modal" class="component-modal"></div>
+
+    <!-- SSD Modal -->
+    <div id="ssd-modal" class="component-modal"></div>
+
+
   </div>
 
   
