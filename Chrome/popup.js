@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupComponentModals();
   setupModalsWithCloseButton();
 
-  const addr = "3.37.46.145:8000";
+  const addr = "43.203.144.22:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -473,9 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  
-
-
   let series = {}; // 자동 클릭, 글로벌 변수
 
   ////////////////////////////////////////////////// 견적서 3개 중에 하나 선택하는 함수  //////////////////////////////////////////////////////////////////////
@@ -518,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`${prefix}-ssd`).textContent = data["SSD"];
     document.getElementById(`${prefix}-power`).textContent = data["파워"];
     document.getElementById(`${prefix}-main`).textContent = data["메인보드"];
-    document.getElementById(`${prefix}-reason`).textContent = data["이유"];
+    // document.getElementById(`${prefix}-reason`).textContent = data["이유"]; #TODO
   }
 
   ////////////////////////////////////////////////// 자동 클릭 및 긁은 아이템 백으로 보내기  //////////////////////////////////////////////////////////////////////
