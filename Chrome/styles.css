@@ -171,6 +171,21 @@
   overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
 }
 
+/* Modal 단기 버튼 */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
 /*************************************************************************************************************************************/
 
 
@@ -421,81 +436,81 @@ body {
 }
 
 
-/****************************** 견적서 html css ******************************/
-/* Quotation popup container */
-#quotation-popup-container {
-  padding: 20px;
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
-
-/* Title for the quotation popup */
-#quotation-popup-container h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* Quotations container */
-#quotations-container {
+/****************************** 견적서 css ******************************/
+/* 견적 컨테이너 */
+#quotation-container {
   display: flex;
-  flex-direction: column; /* 세로 정렬 */ 
-  gap: 20px; /* Add spacing between quotations */
-  margin-top: 20px;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* Center the blocks horizontally */
+  justify-content: flex-start; /* Ensure the blocks start from the top */
+  gap: 5px; /* Add spacing between the blocks */
+  margin-top: 10px;
 }
 
-/* Individual Quotation Block */
+/* 개별 견적 블록 */
 .quotation {
-  width: 100%;
+  width: 80%; /* 작은 화면에서는 전체 너비 사용 */
+  height: 30%;
+  margin: 5px 0; /* Center the block horizontally */
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* 내부 여백 줄이기 */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* 약간 작은 그림자 */
   transition: transform 0.3s;
-  display: flex;
+  display: none; /* Hide quotation blocks initially */
   flex-direction: column;
 }
 
+
 .quotation:hover {
-  transform: translateY(-10px); /* Slight hover effect */
+  transform: translateY(-5px); /* 호버 시 약간 작은 효과 */
 }
 
 /* 제목 스타일 */
 .quotation h3 {
-  margin: 0 0 15px 0; /* 제목과 아래 내용 간격 */
-  font-size: 1.5rem;
+  margin: 0 0 5px 0; /* 제목과 내용 사이 간격 줄이기 */
+  font-size: 1rem; /* 제목 폰트 크기 줄이기 */
   color: #333;
-  text-align: center; /* 왼쪽 정렬 */
+  text-align: center; /* 중앙 정렬 */
+}
+
+#quotation-modal h3 {
+  text-align: center; /* Center the text horizontally */
+  font-size: 1rem; /* Adjust font size as needed */
+  font-weight: bold; /* Make the text bold */
+  color: #333; /* Set text color */
+  margin-bottom: 0px; /* Add spacing below the title */
 }
 
 /* 이미지와 텍스트 정렬 */
 .quotation-content {
-
-  display: flex;
-  align-items: flex-start; /* 텍스트와 이미지의 위쪽 정렬 */
-  gap: 20px; /* 이미지와 텍스트 간격 */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Align image and text vertically */
+  justify-content: flex-start; /* Align items to the left */
+  gap: 20px; /* Add space between the image and text */
 }
 
-/* Image placeholder */
+
+/* 이미지 플레이스홀더 */
 .image-placeholder {
-  width: 150px;
-  height: 150px;
+  width: 100px; /* 이미지 크기 줄이기 */
+  height: 130px; /* 이미지 크기 줄이기 */
   background-color: #f0f0f0;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px; /* 둥근 모서리 크기 줄이기 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* 플레이스홀더 텍스트 크기 줄이기 */
   color: #666;
 }
 
 .image-placeholder img {
-  max-width: 100%; /* 이미지가 placeholder의 너비를 넘지 않도록 설정 */
-  max-height: 100%; /* 이미지가 placeholder의 높이를 넘지 않도록 설정 */
-  object-fit: cover; /* 이미지 비율을 유지하며 placeholder에 맞추기 */
-  border-radius: inherit; /* 부모의 border-radius를 상속 */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover; /* 비율 유지하며 플레이스홀더에 맞추기 */
+  border-radius: inherit; /* 부모 요소의 둥근 모서리 상속 */
 }
 
 /* 세부 정보 리스트 */
@@ -506,72 +521,69 @@ body {
 }
 
 .details li {
-  margin-bottom: 5px; /* 항목 간의 간격 */
+  margin-bottom: 4px; /* 항목 간 간격 줄이기 */
 }
 
 .details strong {
   color: #333;
 }
 
-.reason {
-  margin-top: 15px; /* 리스트와 이유 항목 사이 간격 */
-  font-size: 0.95rem; /* 이유 텍스트 크기 */
-  color: #555; /* 이유 텍스트 색상 */
-}
-
-.reason strong {
-  color: #333; /* "이유:" 강조 */
-}
-
-/* Close button */
-#close-popup {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #db4a2b;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-#close-popup:hover {
-  background-color: #b4321f;
-}
-
-/* Scrollbars for small popups */
-#quotation-popup-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-#quotation-popup-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-#quotation-popup-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-
-#quotation-popup-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* 견적 선택 */
+/* 선택된 견적 하이라이트 */
 .quotation.selected {
-  border: 2px solid #007BFF; /* Highlight with a blue border */
-  background-color: #f0f8ff; /* Light blue background */
+  border: 2px solid #007BFF; /* 파란색 테두리로 강조 */
+  background-color: #f0f8ff; /* 연한 파란색 배경 */
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
-/* Responsive design for popup */
-@media (max-width: 600px) {
-  #quotations-container {
-    flex-direction: column;
-    gap: 10px;
-  }
+/* 로딩 */
+/* 모달 중앙에 스피너 위치 */
+#loading-spinner {
+  position: absolute; /* 모달 기준으로 절대 위치 */
+  top: 50%; /* 수직 중앙 정렬 */
+  left: 47.5%; /* 수평 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 정확한 중앙 위치 조정 */
+  z-index: 1000; /* 다른 콘텐츠 위에 표시 */
+  text-align: center; /* 텍스트를 중앙 정렬 */
+  display: flex; /* 이미지와 텍스트를 블록으로 취급 */
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* 이미지와 텍스트 정렬 */
+  gap: 10px; /* 이미지와 텍스트 간 간격 추가 */
+}
 
-  .quotation {
-    width: 100%; /* Take full width on small screens */
-  }
+/**************** 스피너 이미지 스타일 *******************/
+#loading-spinner img {
+  width: 100px; /* 스피너 크기 조정 */
+  height: 100px;
+}
+
+/* 스피너 아래 로딩 텍스트 스타일 */
+#loading-text {
+  font-size: 1rem; /* 텍스트 크기 */
+  color: #555; /* 텍스트 색상 */
+  margin-top: 10px; /* 이미지와의 간격 */
+}
+
+/**************** placeholder 스타일 *******************/
+#placeholder-message {
+  position: absolute; /* 모달 기준으로 절대 위치 설정 */
+  top: 50%; /* 수직 중앙 정렬 */
+  left: 50%; /* 수평 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 정확한 중앙 위치로 이동 */
+  text-align: center; /* 텍스트를 중앙 정렬 */
+  display: flex; /* 플렉스박스를 사용하여 정렬 */
+  flex-direction: column; /* 이미지와 텍스트를 세로로 정렬 */
+  align-items: center; /* 이미지와 텍스트를 수평으로 정렬 */
+  gap: 10px; /* 이미지와 텍스트 사이 간격 설정 */
+}
+
+/* 플레이스홀더 이미지 스타일 */
+#placeholder-message img {
+  width: 150px;
+  height: 150px;
+}
+
+/* 플레이스홀더 텍스트 스타일 */
+#placeholder-message p {
+  font-size: 1rem; /* 텍스트 크기 (로딩 텍스트와 동일) */
+  color: #555; /* 텍스트 색상 (로딩 텍스트와 동일) */
 }

@@ -1,13 +1,14 @@
 // API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
 import { OPENAI_API_KEY } from './config.js';
 import { setupQuotationModal } from './quotationModal.js';
-import { setupComponentModals } from './componentModal.js';
+import { setupComponentModals, setupModalsWithCloseButton } from './componentModal.js';
 
 
 
 document.addEventListener('DOMContentLoaded', () => {
   setupQuotationModal();
   setupComponentModals();
+  setupModalsWithCloseButton();
 
   const addr = "3.37.46.145:8000";
 
@@ -364,42 +365,121 @@ document.addEventListener('DOMContentLoaded', () => {
   // result-button 클릭 시 데이터를 가져와서 화면에 표시
   document.getElementById('result-button').addEventListener('click', async () => {
     try {
-      const user_id = userID.value;
+        const user_id = userID.value;
 
-      // FastAPI 서버에서 견적 데이터를 가져옴
-      const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: user_id, // 사용자 ID
-        })
-      });
+        // Fetch quotation data from the server
+        const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: user_id, // 사용자 ID
+            }),
+        });
 
-      if (!response1.ok) {
-        throw new Error(`HTTP error! status: ${response1.status}`);
-      }
+        if (!response1.ok) {
+            throw new Error(`HTTP error! status: ${response1.status}`);
+        }
 
-      const data = await response1.json();
-      quotationData = data.response; // 전체 데이터를 저장
+        const data = await response1.json();
+        quotationData = data.response; // Save all data
 
-      // HTML에 견적 데이터를 업데이트
-      updateQuotationUI('가성비', 'bg', data.response["가성비"]);
-      updateQuotationUI('밸런스', 'ba', data.response["밸런스"]);
-      updateQuotationUI('고성능', 'hp', data.response["고성능"]);
+        // Update modal content with all three quotations
+        updateQuotationUI('가성비', 'bg', data.response["가성비"]);
+        updateQuotationUI('밸런스', 'ba', data.response["밸런스"]);
+        updateQuotationUI('고성능', 'hp', data.response["고성능"]);
 
-      chatContainer.style.display = 'none';
-      resultScreen.style.display = 'flex';
+        // Show the modal
+        const quotationModal = document.getElementById('quotation-modal');
+        quotationModal.style.visibility = 'visible';
+        quotationModal.style.opacity = '1';
     } catch (error) {
-      console.error('Error:', error);
+        console.error('Error:', error);
     }
   });
 
-  let series = {}; // 자동 클릭, 글로벌 함수
+  document.getElementById('result-button').addEventListener('click', async () => {
+    try {
+        const user_id = userID.value;
+
+        // 모달 표시
+        const quotationModal = document.getElementById('quotation-modal');
+        quotationModal.style.visibility = 'visible';
+        quotationModal.style.opacity = '1';
+
+        // 로딩 스피너 표시 및 배경 어둡게 처리
+        const loadingSpinner = document.getElementById('loading-spinner');
+        loadingSpinner.style.display = 'block'; // 스피너 표시
+        // quotationModal.classList.add('loading'); // 어두운 배경 활성화
+
+        // 플레이스홀더 메시지 숨기기
+        const placeholderMessage = document.getElementById('placeholder-message');
+        if (placeholderMessage) placeholderMessage.style.display = 'none';
+
+        // 서버에서 견적 데이터 가져오기
+        const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: user_id, // 사용자 ID 전달
+            }),
+        });
+
+        if (!response1.ok) {
+            throw new Error(`HTTP error! status: ${response1.status}`);
+        }
+
+        const data = await response1.json();
+        quotationData = data.response; // 서버에서 받은 데이터 저장
+
+        // 로딩 스피너 숨기기 및 배경 복구
+        loadingSpinner.style.display = 'none';
+        // quotationModal.classList.remove('loading'); // 어두운 배경 제거
+
+        // 견적 블록 표시
+        const quotations = document.querySelectorAll('.quotation');
+        quotations.forEach((quotation) => {
+            quotation.style.display = 'block'; // 각 견적 블록 표시
+        });
+
+        // 모달 내용을 견적으로 업데이트
+        updateQuotationUI('가성비', 'bg', data.response["가성비"]);
+        updateQuotationUI('밸런스', 'ba', data.response["밸런스"]);
+        updateQuotationUI('고성능', 'hp', data.response["고성능"]);
+    } catch (error) {
+        console.error('Error:', error);
+
+        // 에러 발생 시 로딩 스피너 및 어두운 배경 숨기기
+        const loadingSpinner = document.getElementById('loading-spinner');
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
+        const quotationModal = document.getElementById('quotation-modal');
+        // quotationModal.classList.remove('loading'); // 어두운 배경 제거
+
+        // 플레이스홀더 메시지 다시 표시
+        const placeholderMessage = document.getElementById('placeholder-message');
+        if (placeholderMessage) placeholderMessage.style.display = 'block';
+
+        // 견적 블록 숨기기
+        const quotations = document.querySelectorAll('.quotation');
+        quotations.forEach((quotation) => {
+            quotation.style.display = 'none'; // 견적 블록 숨김
+        });
+
+        // 에러 메시지 표시 (선택 사항)
+        alert('견적 데이터를 불러오는 데 실패했습니다.');
+    }
+  });
+
+  
+
+
+  let series = {}; // 자동 클릭, 글로벌 변수
 
   ////////////////////////////////////////////////// 견적서 3개 중에 하나 선택하는 함수  //////////////////////////////////////////////////////////////////////
-  const quotationContainer = document.getElementById('quotations-container');
+  const quotationContainer = document.getElementById('quotation-container');
   quotationContainer.addEventListener('click', (event) => {
     const target = event.target.closest('.quotation');
     if (target) {
@@ -440,75 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`${prefix}-main`).textContent = data["메인보드"];
     document.getElementById(`${prefix}-reason`).textContent = data["이유"];
   }
-  // quotation.html 팝업 열기 및 데이터 전달
-  // document.getElementById('result-button').addEventListener('click', async () => {
-  //   try {
-  //       const user_id = userID.value
-  //       // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
-  //       const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
-  //           method: 'POST',
-  //           headers: {
-  //               'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //               user_id: user_id, // 사용자 ID (필요 시 동적으로 설정)
-  //           })
-  //       });
-
-  //       if (!response1.ok) {
-  //           throw new Error(`HTTP error! status: ${response1.status}`);
-  //       }
-
-  //       const data = await response1.json();
-  //       addMessage('assistant', data["response"]["고성능"]["CPU"]);
-
-  //       document.getElementById('bg-cpu').textContent = data["response"]["가성비"]["CPU"];
-  //       document.getElementById('bg-memory').textContent = data["response"]["가성비"]["메모리"];
-  //       document.getElementById('bg-graphic').textContent = data["response"]["가성비"]["그래픽카드"];
-  //       document.getElementById('bg-ssd').textContent = data["response"]["가성비"]["SSD"];
-  //       document.getElementById('bg-power').textContent = data["response"]["가성비"]["파워"];
-  //       document.getElementById('bg-main').textContent = data["response"]["가성비"]["메인보드"];
-  //       document.getElementById('bg-reason').textContent = data["response"]["가성비"]["이유"];
-
-  //       document.getElementById('ba-cpu').textContent = data["response"]["밸런스"]["CPU"];
-  //       document.getElementById('ba-memory').textContent = data["response"]["밸런스"]["메모리"];
-  //       document.getElementById('ba-graphic').textContent = data["response"]["밸런스"]["그래픽카드"];
-  //       document.getElementById('ba-ssd').textContent = data["response"]["밸런스"]["SSD"];
-  //       document.getElementById('ba-power').textContent = data["response"]["밸런스"]["파워"];
-  //       document.getElementById('ba-main').textContent = data["response"]["밸런스"]["메인보드"];
-  //       document.getElementById('ba-reason').textContent = data["response"]["밸런스"]["이유"];
-
-  //       document.getElementById('hp-cpu').textContent = data["response"]["고성능"]["CPU"];
-  //       document.getElementById('hp-memory').textContent = data["response"]["고성능"]["메모리"];
-  //       document.getElementById('hp-graphic').textContent = data["response"]["고성능"]["그래픽카드"];
-  //       document.getElementById('hp-ssd').textContent = data["response"]["고성능"]["SSD"];
-  //       document.getElementById('hp-power').textContent = data["response"]["고성능"]["파워"];
-  //       document.getElementById('hp-main').textContent = data["response"]["고성능"]["메인보드"];
-  //       document.getElementById('hp-reason').textContent = data["response"]["고성능"]["이유"];
-        
-  //       chatContainer.style.display = 'none';
-  //       resultScreen.style.display = 'flex';
-
-
-        
-  //       // //document.getElementById('budget-memory').textContent = data["response"]["가성비"]["메모리"];
-  //       // // quotation.html 팝업 창 열기
-  //       // const popupWindow = window.open(
-  //       //     'quotation.html', // Path to your popup HTML
-  //       //     'Quotation Popup', // Popup window name
-  //       //     'width=800,height=600,resizable=no,scrollbars=yes'
-  //       // );
-
-  //       // // 팝업 창이 로드되었을 때 데이터를 전달합니다.
-  //       // popupWindow.onload = function() {
-  //       //     popupWindow.postMessage(data.response, '*'); // FastAPI 응답 데이터를 전달
-  //       // };
-        
-  //       //document.getElementById('hcpu').textContent = data["response"]["고성능"]["CPU"];
-  //   } catch (error) {
-  //       console.error('Error:', error);
-  //   }
-  // });
 
   ////////////////////////////////////////////////// 자동 클릭 및 긁은 아이템 백으로 보내기  //////////////////////////////////////////////////////////////////////
   const tempButton = document.getElementById("temp-button");
@@ -795,4 +806,75 @@ document.addEventListener('DOMContentLoaded', () => {
   //     'Quotation Popup', // Popup window name
   //     'width=800,height=600,resizable=no,scrollbars=yes'
   //   );
+  // });
+
+
+   // quotation.html 팝업 열기 및 데이터 전달
+  // document.getElementById('result-button').addEventListener('click', async () => {
+  //   try {
+  //       const user_id = userID.value
+  //       // FastAPI 서버에 POST 요청을 보내 견적 데이터를 가져옵니다.
+  //       const response1 = await fetch(`http://${addr}/chatbot/generate-estimate`, {
+  //           method: 'POST',
+  //           headers: {
+  //               'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify({
+  //               user_id: user_id, // 사용자 ID (필요 시 동적으로 설정)
+  //           })
+  //       });
+
+  //       if (!response1.ok) {
+  //           throw new Error(`HTTP error! status: ${response1.status}`);
+  //       }
+
+  //       const data = await response1.json();
+  //       addMessage('assistant', data["response"]["고성능"]["CPU"]);
+
+  //       document.getElementById('bg-cpu').textContent = data["response"]["가성비"]["CPU"];
+  //       document.getElementById('bg-memory').textContent = data["response"]["가성비"]["메모리"];
+  //       document.getElementById('bg-graphic').textContent = data["response"]["가성비"]["그래픽카드"];
+  //       document.getElementById('bg-ssd').textContent = data["response"]["가성비"]["SSD"];
+  //       document.getElementById('bg-power').textContent = data["response"]["가성비"]["파워"];
+  //       document.getElementById('bg-main').textContent = data["response"]["가성비"]["메인보드"];
+  //       document.getElementById('bg-reason').textContent = data["response"]["가성비"]["이유"];
+
+  //       document.getElementById('ba-cpu').textContent = data["response"]["밸런스"]["CPU"];
+  //       document.getElementById('ba-memory').textContent = data["response"]["밸런스"]["메모리"];
+  //       document.getElementById('ba-graphic').textContent = data["response"]["밸런스"]["그래픽카드"];
+  //       document.getElementById('ba-ssd').textContent = data["response"]["밸런스"]["SSD"];
+  //       document.getElementById('ba-power').textContent = data["response"]["밸런스"]["파워"];
+  //       document.getElementById('ba-main').textContent = data["response"]["밸런스"]["메인보드"];
+  //       document.getElementById('ba-reason').textContent = data["response"]["밸런스"]["이유"];
+
+  //       document.getElementById('hp-cpu').textContent = data["response"]["고성능"]["CPU"];
+  //       document.getElementById('hp-memory').textContent = data["response"]["고성능"]["메모리"];
+  //       document.getElementById('hp-graphic').textContent = data["response"]["고성능"]["그래픽카드"];
+  //       document.getElementById('hp-ssd').textContent = data["response"]["고성능"]["SSD"];
+  //       document.getElementById('hp-power').textContent = data["response"]["고성능"]["파워"];
+  //       document.getElementById('hp-main').textContent = data["response"]["고성능"]["메인보드"];
+  //       document.getElementById('hp-reason').textContent = data["response"]["고성능"]["이유"];
+        
+  //       chatContainer.style.display = 'none';
+  //       resultScreen.style.display = 'flex';
+
+
+        
+  //       // //document.getElementById('budget-memory').textContent = data["response"]["가성비"]["메모리"];
+  //       // // quotation.html 팝업 창 열기
+  //       // const popupWindow = window.open(
+  //       //     'quotation.html', // Path to your popup HTML
+  //       //     'Quotation Popup', // Popup window name
+  //       //     'width=800,height=600,resizable=no,scrollbars=yes'
+  //       // );
+
+  //       // // 팝업 창이 로드되었을 때 데이터를 전달합니다.
+  //       // popupWindow.onload = function() {
+  //       //     popupWindow.postMessage(data.response, '*'); // FastAPI 응답 데이터를 전달
+  //       // };
+        
+  //       //document.getElementById('hcpu').textContent = data["response"]["고성능"]["CPU"];
+  //   } catch (error) {
+  //       console.error('Error:', error);
+  //   }
   // });
