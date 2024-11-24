@@ -170,6 +170,60 @@
   padding: 20px;
   overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
 }
+/* Section styling */
+.component-modal .section {
+  margin-bottom: 0px; /* Space between sections */
+  padding: 10px;
+}
+
+/* Section titles */
+.component-modal .section h2 {
+  font-size: 1.4rem;
+  color: #007BFF; /* Blue for distinction */
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007BFF; /* Underline for emphasis */
+  padding-bottom: 5px;
+}
+
+/* Section content text */
+.component-modal .section p {
+  font-size: 1rem;
+  color: #555; /* Neutral gray for readability */
+  line-height: 1.5; /* Improve readability */
+}
+
+/* Detail grid for specifications */
+.component-modal .details {
+  display: flex; /* Flexbox for layout */
+  flex-wrap: wrap; /* Wrap items on smaller screens */
+  gap: 15px; /* Space between items */
+  margin-top: 10px;
+}
+
+/* Individual detail item */
+.component-modal .detail-item {
+  flex: 1 1 calc(50% - 15px); /* Two items per row with a gap */
+  max-width: calc(50% - 15px);
+  background-color: #f9f9f9; /* Light gray background for contrast */
+  padding: 10px;
+  border-radius: 8px; /* Rounded corners for detail items */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+  box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+/* Labels for detail items */
+.component-modal .detail-item strong {
+  display: block;
+  color: #333; /* Darker color for emphasis */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Values for detail items */
+.component-modal .detail-item span {
+  font-size: 0.9rem;
+  color: #555; /* Neutral gray for text values */
+}
 
 /* Modal 단기 버튼 */
 .close-button {
@@ -587,3 +641,6 @@ body {
   font-size: 1rem; /* 텍스트 크기 (로딩 텍스트와 동일) */
   color: #555; /* 텍스트 색상 (로딩 텍스트와 동일) */
 }
+
+/**************** 부품 모달 스타일 *******************/
+
