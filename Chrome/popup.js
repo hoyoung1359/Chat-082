@@ -1,7 +1,13 @@
 // API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
 import { OPENAI_API_KEY } from './config.js';
+import { setupQuotationModal } from './quotationModal.js';
+import { setupComponentModals } from './componentModal.js';
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupQuotationModal();
+  setupComponentModals();
 
   const addr = "3.37.46.145:8000";
 
@@ -321,16 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsModal.style.display = 'none';
   });
 
-  // ///////////////////////////////////// 견적서 관련 //////////////////////////////////////////
-  // // "견적" 버튼 클릭 시 팝업 열기
-  // document.getElementById('quotation-button').addEventListener('click', () => {
-  //   // Open the quotation.html popup
-  //   const popupWindow = window.open(
-  //     'quotation.html', // Path to your popup HTML
-  //     'Quotation Popup', // Popup window name
-  //     'width=800,height=600,resizable=no,scrollbars=yes'
-  //   );
-  // });
 
   /////////////////////////////////////////////////////////// 견적서 3개 뽑기  ////////////////////////////////////////////////////////////////
     // FastAPI 서버에서 가져온 데이터 저장
@@ -413,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       target.classList.add('selected');
 
-      // Get the type of the selected quotation
+      // 고성능, 밸런스, 가성비 중 하나 선택
       const quotationType = target.querySelector('h3').textContent.trim();
       if (quotationData[quotationType]) {
         selectedQuotation = quotationData[quotationType]; // 선택된 견적 데이터 설정
@@ -596,15 +592,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("선택 결과:", response);
             backendResponse = response; // 백엔드 응답 저장
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
-            processSearch(tabId); // 검색 프로세스 시작
+            processSearch(tabId, backendResponse); // 검색 프로세스 시작
           }
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
 
-       // 아이템 담기
-      processSearch(tabId, test_input)
+      //  // 아이템 담기
+      // processSearch(tabId, backendResponse)
     }
   };
   
@@ -612,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ////////////////////////////////////////////////// 아이템 보내고 담을 아이템 받는 api //////////////////////////////////////////////////////////////////////
   // 백엔드로 데이터를 전송하는 함수
   async function sendPartsData(userId, partsData) {
-    const backendUrl = `http://${addr}/chatbot/select-parts`; // #TODO: addr을 실제 서버 주소로 설정
+    const backendUrl = `http://${addr}/chatbot/select-parts`;
 
     try {
       // POST 요청으로 데이터 전송
@@ -690,17 +686,17 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  document.getElementById('back-button').addEventListener('click', () => {
-    // Logic to go back to the chat screen
-    if (resultScreen.style.display === 'flex') {
-      resultScreen.style.display = 'none';
-      chatContainer.style.display = 'flex';
-    } else if (chatContainer.style.display === 'flex') {
-      chatContainer.style.display = 'none';
-      startScreen.style.display = 'flex';
-    }
-  });
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // document.getElementById('back-button').addEventListener('click', () => {
+  //   // Logic to go back to the chat screen
+  //   if (resultScreen.style.display === 'flex') {
+  //     resultScreen.style.display = 'none';
+  //     chatContainer.style.display = 'flex';
+  //   } else if (chatContainer.style.display === 'flex') {
+  //     chatContainer.style.display = 'none';
+  //     startScreen.style.display = 'flex';
+  //   }
+  // });
 
   loadSettings();
   // 페이지 로드 시 채팅 기록 불러오기
@@ -788,3 +784,15 @@ document.addEventListener('DOMContentLoaded', () => {
 //       return null;
 //     }
 //   }
+
+
+  // // ///////////////////////////////////// 견적서 관련 //////////////////////////////////////////
+  // // "견적" 버튼 클릭 시 팝업 열기
+  // document.getElementById('quotation-button').addEventListener('click', () => {
+  //   // Open the quotation.html popup
+  //   const quotationWindow = window.open(
+  //     'quotation.html', // Path to your popup HTML
+  //     'Quotation Popup', // Popup window name
+  //     'width=800,height=600,resizable=no,scrollbars=yes'
+  //   );
+  // });
