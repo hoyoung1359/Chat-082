@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import Dict, Any
 
 # 기존 ChatRequest와 ChatResponse
 class ChatRequest(BaseModel):
@@ -21,11 +21,10 @@ class EstimateResponse(BaseModel):
 
 class PartsRequest(BaseModel):
     user_id: str
-    parts_data: Dict  # 부품 데이터는 리스트 형태로 전달
+    parts_data: Dict  # 부품 정보
 
 class PartsResponse(BaseModel):
-    response: str
-    selected_part: Dict = None  # 선택된 부품 정보
+    response: Dict  # 선택된 부품 정보
 
 
 class UserQuestionRequest(BaseModel):
