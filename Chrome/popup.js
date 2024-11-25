@@ -1,5 +1,10 @@
 // API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
 document.addEventListener('DOMContentLoaded', () => {
+  setupQuotationModal();
+  setupComponentModals();
+  setupModalsWithCloseButton();
+
+  const addr = "3.34.27.51:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
