@@ -1,8 +1,6 @@
 import { setupQuotationModal } from './quotationModal.js';
 import { setupComponentModals, setupModalsWithCloseButton } from './componentModal.js';
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
   setupQuotationModal();
   setupComponentModals();
@@ -113,159 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     chatMessages.innerHTML = ''; // 기존 메시지 초기화
     chatHistory.forEach(msg => addMessage(msg.sender, msg.message, msg.isImage));
   }
-
-  async function getImageResponse(userMessage) {
-    const imagePrompt = "";
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          prompt: "Draw the character of 082, a computer purchase guide chatbot. Chat-082 is an custom-built computer purchase guide chatbot using llm.\
-          It helps buyers select computer parts such as cpu and graphic cards from computer purchase sites. \
-          Draw the features of my program well in the character with a simple design that is not complicated to use on the start screen.",
-          n: 1,
-          size: "256x256"
-        })
-      });
-
-      if (!response.ok) {
-        addMessage('system', `API Error: ${response.status} - ${response.statusText}`);
-        return;
-      }
-
-      const data = await response.json();
-      const imageUrl = data.data[0].url;
-      addMessage('assistant', imageUrl, true);
-    } catch (error) {
-      console.error('Error:', error);
-      addMessage('system', '이미지를 받아오는 중 오류가 발생했습니다.');
-    }
-  }
-  
-
-
-  async function getAIResponse(userMessage) {
-    const prompt =  `당신은 컴퓨터 구매를 돕는 전문가입니다. 조립용 컴퓨터 부품을 고르고 있는 구매자의 질문에 친절하고 알기쉽게 간단히 답변해주세요. 비유를 사용해도 좋습니다. 한 질문에 대한 답변은 너무 길지 않게 간단히 해주세요.`;
-    const filterDictionary = result.filterDictionary;
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo", // 최신 모델로 변경
-          messages: [
-            { role: "system", content: prompt },
-            { role: "user", content: userMessage }
-          ],
-          max_tokens: 300,
-          temperature: 0.7,
-        })
-      });
-
-      if (!response.ok) {
-        addMessage('system', `API Error: ${response.status} - ${response.statusText}`);
-        return;
-      }
-
-      const data = await response.json();
-      if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-        const aiResponse = data.choices[0].message.content.trim();
-        addMessage('assistant', aiResponse);
-      } else {
-        addMessage('system', 'AI 응답을 받아오는 데 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
-    }
-  }
-
-  // async function getAIResponse(userMessage) {
-  //   chrome.storage.local.get("filterDictionary", async (result) => {
-  //     const filterDictionary = result.filterDictionary;
-  
-  //     if (!filterDictionary) {
-  //       console.log("No filter options found.");
-  //       return;
-  //     }
-  
-  //     // Define the prompt with the desired format
-  //     const prompt = `
-  //     현재 컴퓨터 부품 선택을 위한 필터 목록이 아래와 같습니다: ${JSON.stringify(filterDictionary)}
-  //     사용자의 질문에 맞는 적합한 필터를 선택하여 다음과 같은 형식으로 답변해 주세요:
-  //     response: 자연어 응답 내용
-  //     filter choice: { category: "카테고리 이름", label: "필터 라벨" }.
-  //     필터는 가능한 선택지 중 하나만 선택해 주세요.`;
-  
-  //     // Call the AI API
-  //     try {
-  //       const response = await fetch('https://api.openai.com/v1/chat/completions', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${OPENAI_API_KEY}`
-  //         },
-  //         body: JSON.stringify({
-  //           model: "gpt-3.5-turbo",
-  //           messages: [
-  //             { role: "system", content: prompt },
-  //             { role: "user", content: userMessage }
-  //           ],
-  //           max_tokens: 300,
-  //           temperature: 0,
-  //         })
-  //       });
-  
-  //       const data = await response.json();
-  
-  //       // Check if we have a valid response
-  //       if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-  //         const aiResponse = data.choices[0].message.content.trim();
-  //         console.log("Raw AI Response:", aiResponse); // Log raw response
-  
-  
-  //         // Extract natural language response and structured filter choice
-  //         const responseMatch = aiResponse.match(/response:\s*(.*?)\s*filter choice:/s);
-  //         const filterMatch = aiResponse.match(/\{ category: "(.*?)", label: "(.*?)" \}/);
-  
-  //         if (responseMatch && filterMatch && filterMatch[1] && filterMatch[2]) {
-  //           const naturalResponse = responseMatch[1].trim();
-  //           const selectedFilter = { category: filterMatch[1], label: filterMatch[2] };
-  //           const selectedFilters = [selectedFilter]; // Wrap as array
-  
-  //           // Display the natural language response separately if desired
-  //           addMessage('assistant', naturalResponse);
-  //           addMessage('assistant', "필터 항목: " + `${selectedFilter.category} -> ${selectedFilter.label}`);
-  //           console.log("Parsed Selected Filter:", selectedFilters);
-  
-  //           // Store selectedFilters in Chrome storage for use in the applyButton
-  //           chrome.storage.local.set({ selectedFilters }, () => {
-  //             console.log("Selected filters saved to Chrome storage:", selectedFilters);
-  //           });
-  //         } else {
-  //           console.log("Failed to parse AI response. AI response:", aiResponse);
-  //           addMessage('system', 'AI 응답에서 필터 정보를 찾을 수 없습니다.');
-  //         }
-  //       } else {
-  //         console.log("Unexpected AI response format:", data);
-  //         addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
-  //       }
-  
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //       addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
-  //     }
-  //   });
-  // }
   
   function saveSettings() {
     const settings = {
@@ -337,8 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = { "선택된 견적": {} }; // 새로운 입력 데이터 초기화
     for (const [key, value] of Object.entries(selectedData)) {
       if (key !== "이유") { // 이유 제외
+        let cpuType = "";
+        if (key === "CPU" && value.includes("라이젠")) {
+          cpuType = "AMD";
+        } else if (key === "CPU" && value.includes("i")) {
+          cpuType = "INTEL";
+        }
         input["선택된 견적"][key] = {
-          upperCategory: getUpperCategory(key), // 필요한 상위 카테고리 제공
+          upperCategory: getUpperCategory(key, cpuType), // 필요한 상위 카테고리 제공
           value: value,
         };
       }
@@ -348,9 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 견적 유형별 상위 카테고리 매핑 함수
-  function getUpperCategory(part) {
+  function getUpperCategory(part, cpuType) {
     const categoryMapping = {
-      "CPU": "AMD 모델명",
+      // "CPU": "AMD 모델명",
+      "CPU": cpuType === "AMD" ? "AMD 모델명" : cpuType === "INTEL" ? "INTEL 모델명" : "",
       "메인보드": "칩셋종류",
       "메모리": "메모리용량",
       "그래픽카드": "RTX시리즈",
@@ -496,7 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
         //  공백 제거
         for (const key in series) {
           if (series[key]?.value) {
-            series[key].value = series[key].value.replace(/\s+/g, ""); 
+            if (!series[key].value.includes("코어")) {
+              series[key].value = series[key].value.replace(/\s+/g, ""); // Remove whitespace for non-INTEL values
+            }
           }
         }
 
@@ -596,15 +450,14 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("백엔드 에러:", response.error);
           } else {
             console.log("선택 결과:", response);
-            backendResponse = response; // 백엔드 응답 저장
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
-            processSearch(tabId, backendResponse); // 검색 프로세스 시작
+            processSearch(tabId, response); // 검색 프로세스 시작
           }
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
-
+      
       //  // 아이템 담기
       // processSearch(tabId, backendResponse)
     }
@@ -646,15 +499,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   ////////////////////////////////////////////////// 자동 클릭 및 선택된 아이템 담기  //////////////////////////////////////////////////////////////////////
+
   const processSearch = (tabId, searchInput) => {
-    const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
+    // const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
+    console.log("Precess Search, DATA: ", searchInput)
+    const responseEntries = Object.keys(searchInput['response']);
+    console.log("ResponseEntries", responseEntries)
   
     let searchIndex = 0; // 현재 검색 중인 인덱스
   
     const processPartSearch = () => {
       if (searchIndex < responseEntries.length) {
         const key = menus[searchIndex]; // 현재 메뉴
-        const productName = responseEntries.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
+        // const productName = searchInput.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
+        const productName = searchInput['response'][key]["제품명"]
   
         // 첫 번째 요청: 메뉴 클릭
         chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
@@ -873,3 +731,224 @@ document.addEventListener('DOMContentLoaded', () => {
   //       console.error('Error:', error);
   //   }
   // });
+
+    // async function getAIResponse(userMessage) {
+  //   chrome.storage.local.get("filterDictionary", async (result) => {
+  //     const filterDictionary = result.filterDictionary;
+  
+  //     if (!filterDictionary) {
+  //       console.log("No filter options found.");
+  //       return;
+  //     }
+  
+  //     // Define the prompt with the desired format
+  //     const prompt = `
+  //     현재 컴퓨터 부품 선택을 위한 필터 목록이 아래와 같습니다: ${JSON.stringify(filterDictionary)}
+  //     사용자의 질문에 맞는 적합한 필터를 선택하여 다음과 같은 형식으로 답변해 주세요:
+  //     response: 자연어 응답 내용
+  //     filter choice: { category: "카테고리 이름", label: "필터 라벨" }.
+  //     필터는 가능한 선택지 중 하나만 선택해 주세요.`;
+  
+  //     // Call the AI API
+  //     try {
+  //       const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${OPENAI_API_KEY}`
+  //         },
+  //         body: JSON.stringify({
+  //           model: "gpt-3.5-turbo",
+  //           messages: [
+  //             { role: "system", content: prompt },
+  //             { role: "user", content: userMessage }
+  //           ],
+  //           max_tokens: 300,
+  //           temperature: 0,
+  //         })
+  //       });
+  
+  //       const data = await response.json();
+  
+  //       // Check if we have a valid response
+  //       if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+  //         const aiResponse = data.choices[0].message.content.trim();
+  //         console.log("Raw AI Response:", aiResponse); // Log raw response
+  
+  
+  //         // Extract natural language response and structured filter choice
+  //         const responseMatch = aiResponse.match(/response:\s*(.*?)\s*filter choice:/s);
+  //         const filterMatch = aiResponse.match(/\{ category: "(.*?)", label: "(.*?)" \}/);
+  
+  //         if (responseMatch && filterMatch && filterMatch[1] && filterMatch[2]) {
+  //           const naturalResponse = responseMatch[1].trim();
+  //           const selectedFilter = { category: filterMatch[1], label: filterMatch[2] };
+  //           const selectedFilters = [selectedFilter]; // Wrap as array
+  
+  //           // Display the natural language response separately if desired
+  //           addMessage('assistant', naturalResponse);
+  //           addMessage('assistant', "필터 항목: " + `${selectedFilter.category} -> ${selectedFilter.label}`);
+  //           console.log("Parsed Selected Filter:", selectedFilters);
+  
+  //           // Store selectedFilters in Chrome storage for use in the applyButton
+  //           chrome.storage.local.set({ selectedFilters }, () => {
+  //             console.log("Selected filters saved to Chrome storage:", selectedFilters);
+  //           });
+  //         } else {
+  //           console.log("Failed to parse AI response. AI response:", aiResponse);
+  //           addMessage('system', 'AI 응답에서 필터 정보를 찾을 수 없습니다.');
+  //         }
+  //       } else {
+  //         console.log("Unexpected AI response format:", data);
+  //         addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
+  //       }
+  
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //       addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
+  //     }
+  //   });
+  // }
+
+  // async function getImageResponse(userMessage) {
+  //   const imagePrompt = "";
+
+  //   try {
+  //     const response = await fetch('https://api.openai.com/v1/images/generations', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${OPENAI_API_KEY}`
+  //       },
+  //       body: JSON.stringify({
+  //         prompt: "Draw the character of 082, a computer purchase guide chatbot. Chat-082 is an custom-built computer purchase guide chatbot using llm.\
+  //         It helps buyers select computer parts such as cpu and graphic cards from computer purchase sites. \
+  //         Draw the features of my program well in the character with a simple design that is not complicated to use on the start screen.",
+  //         n: 1,
+  //         size: "256x256"
+  //       })
+  //     });
+
+  //     if (!response.ok) {
+  //       addMessage('system', `API Error: ${response.status} - ${response.statusText}`);
+  //       return;
+  //     }
+
+  //     const data = await response.json();
+  //     const imageUrl = data.data[0].url;
+  //     addMessage('assistant', imageUrl, true);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     addMessage('system', '이미지를 받아오는 중 오류가 발생했습니다.');
+  //   }
+  // }
+  
+
+
+  // async function getAIResponse(userMessage) {
+  //   const prompt =  `당신은 컴퓨터 구매를 돕는 전문가입니다. 조립용 컴퓨터 부품을 고르고 있는 구매자의 질문에 친절하고 알기쉽게 간단히 답변해주세요. 비유를 사용해도 좋습니다. 한 질문에 대한 답변은 너무 길지 않게 간단히 해주세요.`;
+  //   const filterDictionary = result.filterDictionary;
+
+  //   try {
+  //     const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${OPENAI_API_KEY}`
+  //       },
+  //       body: JSON.stringify({
+  //         model: "gpt-3.5-turbo", // 최신 모델로 변경
+  //         messages: [
+  //           { role: "system", content: prompt },
+  //           { role: "user", content: userMessage }
+  //         ],
+  //         max_tokens: 300,
+  //         temperature: 0.7,
+  //       })
+  //     });
+
+  //     if (!response.ok) {
+  //       addMessage('system', `API Error: ${response.status} - ${response.statusText}`);
+  //       return;
+  //     }
+
+  //     const data = await response.json();
+  //     if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+  //       const aiResponse = data.choices[0].message.content.trim();
+  //       addMessage('assistant', aiResponse);
+  //     } else {
+  //       addMessage('system', 'AI 응답을 받아오는 데 실패했습니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     addMessage('system', 'AI 응답을 받아오는 중 오류가 발생했습니다.');
+  //   }
+  // }
+
+  // let componentDetails = {
+  //   "CPU": {
+  //       "제풒명": "Intel Core i9-13900K",
+  //       "부품 설명": "고성능 데스크탑 프로세서",
+  //       "상세 스펙": {
+  //           "소켓": "LGA 1700",
+  //           "공정": "Intel 7",
+  //           "코어": "24코어 32스레드",
+  //           "기본 클럭": "3.0GHz",
+  //           "최대 클럭": "5.8GHz",
+  //           "메모리 규격": "DDR5",
+  //       },
+  //   },
+  //   "메인보드": {
+  //       "제품명": "ASUS ROG Maximus Z790 Hero",
+  //       "부품 설명": "고급형 게이밍 메인보드",
+  //       "상세 스펙": {
+  //           "소켓": "LGA 1700",
+  //           "폼팩터": "ATX",
+  //           "메모리 지원": "DDR5 최대 128GB",
+  //           "확장 슬롯": "PCIe 5.0 x16, PCIe 4.0 x16",
+  //           "네트워크": "2.5Gbps LAN, Wi-Fi 6E",
+  //       },
+  //   },
+  //   "메모리": {
+  //       "제품명": "G.Skill Trident Z5 Neo DDR5-6000 CL30",
+  //       "부품 설명": "고성능 DDR5 메모리",
+  //       "상세 스펙": {
+  //           "타입": "DDR5",
+  //           "용량": "32GB (16GB x 2)",
+  //           "클럭 속도": "6000MHz",
+  //           "레이턴시": "CL30",
+  //       },
+  //   },
+  //   "그래픽카드": {
+  //       "제품명": "NVIDIA GeForce RTX 4090",
+  //       "부품 설명": "최상급 그래픽 카드",
+  //       "상세 스펙": {
+  //           "메모리": "24GB GDDR6X",
+  //           "코어 클럭": "2520MHz",
+  //           "전력 소모": "450W",
+  //           "출력 포트": "DisplayPort 1.4a x 3, HDMI 2.1 x 1",
+  //       },
+  //   },
+  //   "파워": {
+  //       "제품명": "Corsair RMx Series RM1000x",
+  //       "부품 설명": "고효율 파워 서플라이",
+  //       "상세 스펙": {
+  //           "출력 용량": "1000W",
+  //           "효율 등급": "80 Plus Platinum",
+  //           "케이블 타입": "풀 모듈러",
+  //           "팬 크기": "135mm FDB 팬",
+  //           "보증 기간": "10년",
+  //       },
+  //   },
+  //   "SSD": {
+  //       "제품명": "Samsung 990 PRO",
+  //       "부품 설명": "고성능 NVMe SSD",
+  //       "상세 스펙": {
+  //           "용량": "2TB",
+  //           "인터페이스": "PCIe Gen 4 x4",
+  //           "읽기 속도": "최대 7450MB/s",
+  //           "쓰기 속도": "최대 6900MB/s",
+  //           "폼팩터": "M.2 2280",
+  //       },
+  //   },
+  // }

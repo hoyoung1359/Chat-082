@@ -8,8 +8,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const searchBoxSelector = "#schProductName"; // 검색 박스
     const searchButtonSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.top_table.flex.btwn > div:nth-child(2) > div > span.search_box > button";
     const productRowSelector = "#wrap > div.compatibility_list.compatibility_list2 > div.page.page1500 > div.cont_table.flex > div.rt_table > div.pro_table > table > tbody > tr";
-    
-  
+
     if (message.action === "clickMenu") {
       // 메뉴 클릭 처리
       const menuElement = document.querySelector(menuSelector);
