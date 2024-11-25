@@ -68,36 +68,40 @@ export function setupModalsWithCloseButton() {
     });
   }
 
-const componentMapping = {
-    "CPU": "cpu",
-    "메인보드": "mainboard",
-    "메모리": "memory",
-    "그래픽카드": "gpu",
-    "파워": "power",
-    "SSD": "ssd"
-  };
 
-// Function to update modal content
-function updateModalContent(modalId, details) {
+// 개별 모달의 내용을 업데이트하는 함수
+export function updateModalContent(modalId, details) {
     const modal = document.getElementById(`${modalId}-modal`);
-    if (!modal) return; // If the modal doesn't exist, skip
+    if (!modal) return; // 모달이 존재하지 않으면 함수 종료
 
-    // Update Product Name
-    const productName = modal.querySelector('.section h2 + p'); // Adjust selector based on your structure
-    if (productName) {
-        productName.textContent = details['부품 설명'];
+    // 부품 설명 업데이트
+    const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
+    if (description) {
+        description.textContent = details['부품 설명']; // 부품 설명 데이터를 업데이트
     }
 
-    // Update Detailed Specs
-    const specItems = modal.querySelectorAll('.details .detail-item span');
-    const specs = details['상세 스펙'];
-    let index = 0;
+    // 필요한 경우 다른 모달 콘텐츠 업데이트 로직 추가 가능
+}
 
-    // Populate specs in the modal
-    for (const [key, value] of Object.entries(specs)) {
-        if (specItems[index]) {
-        specItems[index].textContent = value; // Assign the value
-        index++;
+// 모든 모달을 업데이트하는 함수
+export function updateAllModals(componentDetails) {
+    const componentMapping = {
+        "CPU": "cpu",           // CPU -> cpu-modal
+        "메인보드": "mainboard", // 메인보드 -> mainboard-modal
+        "메모리": "memory",      // 메모리 -> memory-modal
+        "그래픽카드": "gpu",     // 그래픽카드 -> gpu-modal
+        "파워": "power",         // 파워 -> power-modal
+        "SSD": "ssd"            // SSD -> ssd-modal
+    };
+
+    console.log("TEST")
+    console.log(componentDetails)
+    // componentMapping의 각 키를 반복 처리
+    for (const [key, modalId] of Object.entries(componentMapping)) {
+        console.log(key)
+        const details = componentDetails[key]; // componentDetails에서 해당 부품 정보 가져오기
+        if (details) {
+            updateModalContent(modalId, details); // 모달 업데이트 함수 호출
         }
     }
 }
