@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupComponentModals();
   setupModalsWithCloseButton();
 
-  const addr = "43.203.144.22:8000";
+  const addr = "3.35.15.142:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
