@@ -1,5 +1,3 @@
-// API 키를 직접 입력합니다. 실제 배포 시에는 이 키를 안전하게 관리해야 합니다.
-import { OPENAI_API_KEY } from './config.js';
 import { setupQuotationModal } from './quotationModal.js';
 import { setupComponentModals, setupModalsWithCloseButton } from './componentModal.js';
 
