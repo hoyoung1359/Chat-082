@@ -143,7 +143,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (productNameElement && productNameElement.textContent.trim() === message.productName && addButton) {
             addButton.click();
             success = true;
-        }
+        }z
         });
 
         sendResponse({ success });
