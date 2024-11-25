@@ -147,12 +147,12 @@
 .component-modal {
   display: none; /* 기본적으로 숨김 */
   position: fixed; /* 화면 중앙 고정 */
-  top: 50%; /* 화면 세로 정렬 */
+  top: 35%; /* 화면 세로 정렬 */
   left: calc(60px + 20px); /* 사이드바의 너비 + 간격 */
   transform: translateY(-50%); /* 중앙 정렬 (세로만) */
   width: 82%; /* 화면 너비의 70% */
   max-width: 800px; /* 최대 너비 */
-  height: 90%; /* 화면 높이의 60% */
+  height: 60%; /* 화면 높이의 60% */
   background-color: white; /* 배경색 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
   border-radius: 10px; /* 둥근 모서리 */

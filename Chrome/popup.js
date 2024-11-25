@@ -452,14 +452,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("선택 결과:", response);
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
+
+            console.log("Updating Modals.")
+            // 모델 업데이트
+            updateModalContent(componentMapping, response)
+            console.log("Modal Update complete.")
           }
+
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
-      
-      //  // 아이템 담기
-      // processSearch(tabId, backendResponse)
+    
     }
   };
   
@@ -543,14 +547,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         console.log("모든 검색 작업 완료");
         searchIndex = 0; // 검색 인덱스 초기화
+        return;
       }
     };
-  
-    processPartSearch(); // 첫 번째 검색 시작
   };
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // document.getElementById('back-button').addEventListener('click', () => {
   //   // Logic to go back to the chat screen
   //   if (resultScreen.style.display === 'flex') {
