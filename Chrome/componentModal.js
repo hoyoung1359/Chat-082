@@ -67,3 +67,37 @@ export function setupModalsWithCloseButton() {
       });
     });
   }
+
+const componentMapping = {
+    "CPU": "cpu",
+    "메인보드": "mainboard",
+    "메모리": "memory",
+    "그래픽카드": "gpu",
+    "파워": "power",
+    "SSD": "ssd"
+  };
+
+// Function to update modal content
+function updateModalContent(modalId, details) {
+    const modal = document.getElementById(`${modalId}-modal`);
+    if (!modal) return; // If the modal doesn't exist, skip
+
+    // Update Product Name
+    const productName = modal.querySelector('.section h2 + p'); // Adjust selector based on your structure
+    if (productName) {
+        productName.textContent = details['부품 설명'];
+    }
+
+    // Update Detailed Specs
+    const specItems = modal.querySelectorAll('.details .detail-item span');
+    const specs = details['상세 스펙'];
+    let index = 0;
+
+    // Populate specs in the modal
+    for (const [key, value] of Object.entries(specs)) {
+        if (specItems[index]) {
+        specItems[index].textContent = value; // Assign the value
+        index++;
+        }
+    }
+}

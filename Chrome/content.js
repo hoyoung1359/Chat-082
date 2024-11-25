@@ -101,6 +101,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         rows.forEach(row => {
             const productNameElement = row.querySelector(".product_name p.ntMB14");
             const priceElement = row.querySelector(".price > p:nth-of-type(2)");
+            
             const onclickAttr = productNameElement ? productNameElement.getAttribute("onclick") : "";
             const productIdMatch = onclickAttr.match(/ProductNo=(\d+)/);
             const productId = productIdMatch ? productIdMatch[1] : null;
@@ -142,7 +143,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (productNameElement && productNameElement.textContent.trim() === message.productName && addButton) {
             addButton.click();
             success = true;
-        }
+        }z
         });
 
         sendResponse({ success });
