@@ -9,13 +9,14 @@
   width: 50px;
   background-color: #e0edff69;
   padding: 10px;
+  padding-top: 20px; /* 상단 패딩 */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 
-#home-button, #settings-button, #quotation-button {
+#home-button, #back-button  {
   width: 50px;
   height: 50px;
   background-color: #c46554c0;
@@ -31,11 +32,215 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-#home-button:hover, #settings-button:hover, #quotation-button:hover {
+#home-button:hover, #back-button:hover {
   background-color: #0066cc;
   color: white;
 }
 
+
+/**************************************** 컴퓨터 부품 버튼 ********************************************************************************/
+/* 버튼 스타일 */
+#cpu-button, #mainboard-button, #memory-button, #gpu-button, #power-button, #ssd-button, #quotation-button, #settings-button {
+  width: 50px; /* 버튼 크기 (가로) */
+  height: 50px; /* 버튼 크기 (세로) */
+  background-color: #c46554c0; /* 기본 배경색 */
+  border: 2px solid #e29b58ea; /* 테두리 색상 및 두께 */
+  border-radius: 15%; /* 버튼의 모서리를 둥글게 */
+  cursor: pointer; /* 마우스 커서 변경 */
+  display: flex; /* 버튼 내용 정렬 */
+  justify-content: center; /* 중앙 정렬 (가로) */
+  align-items: center; /* 중앙 정렬 (세로) */
+  position: relative; /* 툴팁 위치를 위한 상대적 위치 지정 */
+  margin-bottom: 10px; /* 버튼 간 간격 */
+  transition: transform 0.2s ease, background-color 0.3s ease; /* 애니메이션 효과 */
+}
+
+/* 버튼 호버 효과 */
+#cpu-button:hover, #mainboard-button:hover, #memory-button:hover, #gpu-button:hover, #power-button:hover, #ssd-button:hover, #quotation-button:hover, #settings-button:hover  {
+  transform: scale(1.1); /* 호버 시 버튼 확대 */
+  background-color: #004d99; /* 호버 시 배경색 */
+}
+
+/* 버튼 내부 이미지 스타일 */
+#cpu-button img, #mainboard-button img, #memory-button img, #gpu-button img, #power-button img, #ssd-button img, #quotation-button img, #settings-button img{
+  max-width: 80%; /* 버튼 크기 대비 아이콘/이미지 최대 너비 */
+  max-height: 80%; /* 버튼 크기 대비 아이콘/이미지 최대 높이 */
+  object-fit: contain; /* 이미지 왜곡 방지 */
+}
+
+/* 사이드바 내부 버튼 정렬 */
+#sidebar {
+  display: flex; /* 플렉스 박스 적용 */
+  flex-direction: column; /* 버튼을 세로로 정렬 */
+  align-items: center; /* 중앙 정렬 (가로) */
+  gap: 10px; /* 버튼 간의 간격 */
+}
+
+/* 툴팁 상자 스타일 */
+.info-box {
+  position: absolute; /* 버튼 기준으로 위치 */
+  top: 50%; /* 버튼 내부 중앙 위치 */
+  left: 50%; /* 버튼 내부 중앙 위치 */
+  transform: translate(-50%, -50%); /* 정밀 중앙 정렬 */
+  background-color: rgba(0, 0, 0, 0.8); /* 어두운 배경 */
+  color: white; /* 텍스트 색상 */
+  padding: 4px 8px; /* 툴팁 내부 여백 */
+  border-radius: 3px; /* 박스 모서리 둥글게 */
+  font-size: 10px; /* 텍스트 크기 */
+  white-space: nowrap; /* 텍스트가 한 줄에 표시되도록 설정 */
+  visibility: hidden; /* 초기에는 숨김 */
+  opacity: 0; /* 초기에는 투명 */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* 표시/숨김 애니메이션 */
+  z-index: 1; /* 버튼 위에 표시되도록 설정 */
+}
+
+/* 호버 시 툴팁 표시 */
+#cpu-button:hover .info-box, 
+#mainboard-button:hover .info-box, 
+#memory-button:hover .info-box, 
+#gpu-button:hover .info-box, 
+#power-button:hover .info-box, 
+#ssd-button:hover .info-box,
+#quotation-button:hover .info-box,
+#settings-button:hover .info-box {
+  visibility: visible; /* 툴팁 표시 */
+  opacity: 1; /* 투명도 변경 */
+}
+
+
+/*********************************************************************************************************************************/
+
+/**************************************** 견적 모달 ********************************************************************************/
+/* Modal 스타일 */
+#quotation-modal {
+  display: none; /* 기본적으로 숨김 */
+  position: fixed; /* 화면 중앙 고정 */
+  top: 50%; /* 화면 세로 정렬 */
+  left: calc(60px + 20px); /* 사이드바의 너비 + 간격 */
+  transform: translateY(-50%); /* 중앙 정렬 (세로만) */
+  width: 82%; /* 화면 너비의 70% */
+  max-width: 800px; /* 최대 너비 */
+  height: 90%; /* 화면 높이의 60% */
+  background-color: white; /* 배경색 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  border-radius: 10px; /* 둥근 모서리 */
+  z-index: 1000; /* 다른 콘텐츠 위에 표시 */
+  display: flex; /* 내용 정렬을 위한 플렉스 박스 */
+  flex-direction: column; /* 세로 방향 콘텐츠 정렬 */
+  overflow: hidden; /* 넘치는 콘텐츠 숨김 */
+  visibility: hidden; /* 초기에는 보이지 않음 */
+  opacity: 0; /* 투명도 0 */
+  transition: visibility 0.3s ease, opacity 0.3s ease; /* 표시/숨김 애니메이션 */
+}
+
+/* Modal Content Styling */
+#quotation-modal .modal-content {
+  padding: 20px;
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
+}
+
+
+/*************************************************************************************************************************************/
+
+/**************************************** 부품 모달 ********************************************************************************/
+/* Modal 스타일 */
+.component-modal {
+  display: none; /* 기본적으로 숨김 */
+  position: fixed; /* 화면 중앙 고정 */
+  top: 50%; /* 화면 세로 정렬 */
+  left: calc(60px + 20px); /* 사이드바의 너비 + 간격 */
+  transform: translateY(-50%); /* 중앙 정렬 (세로만) */
+  width: 82%; /* 화면 너비의 70% */
+  max-width: 800px; /* 최대 너비 */
+  height: 90%; /* 화면 높이의 60% */
+  background-color: white; /* 배경색 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  border-radius: 10px; /* 둥근 모서리 */
+  z-index: 1000; /* 다른 콘텐츠 위에 표시 */
+  display: flex; /* 내용 정렬을 위한 플렉스 박스 */
+  flex-direction: column; /* 세로 방향 콘텐츠 정렬 */
+  overflow: hidden; /* 넘치는 콘텐츠 숨김 */
+  visibility: hidden; /* 초기에는 보이지 않음 */
+  opacity: 0; /* 투명도 0 */
+  transition: visibility 0.3s ease, opacity 0.3s ease; /* 표시/숨김 애니메이션 */
+}
+
+/* Modal Content Styling */
+.component-modal .modal-content {
+  padding: 20px;
+  overflow-y: auto; /* 내용이 넘칠 경우 스크롤 가능 */
+}
+/* Section styling */
+.component-modal .section {
+  margin-bottom: 0px; /* Space between sections */
+  padding: 10px;
+}
+
+/* Section titles */
+.component-modal .section h2 {
+  font-size: 1.4rem;
+  color: #007BFF; /* Blue for distinction */
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007BFF; /* Underline for emphasis */
+  padding-bottom: 5px;
+}
+
+/* Section content text */
+.component-modal .section p {
+  font-size: 1rem;
+  color: #555; /* Neutral gray for readability */
+  line-height: 1.5; /* Improve readability */
+}
+
+/* Detail grid for specifications */
+.component-modal .details {
+  display: flex; /* Flexbox for layout */
+  flex-wrap: wrap; /* Wrap items on smaller screens */
+  gap: 15px; /* Space between items */
+  margin-top: 10px;
+}
+
+/* Individual detail item */
+.component-modal .detail-item {
+  flex: 1 1 calc(50% - 15px); /* Two items per row with a gap */
+  max-width: calc(50% - 15px);
+  background-color: #f9f9f9; /* Light gray background for contrast */
+  padding: 10px;
+  border-radius: 8px; /* Rounded corners for detail items */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+  box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+/* Labels for detail items */
+.component-modal .detail-item strong {
+  display: block;
+  color: #333; /* Darker color for emphasis */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+/* Values for detail items */
+.component-modal .detail-item span {
+  font-size: 0.9rem;
+  color: #555; /* Neutral gray for text values */
+}
+
+/* Modal 단기 버튼 */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+/*************************************************************************************************************************************/
 
 
 /* 시작 화면 스타일 */
@@ -284,81 +489,82 @@ body {
   }
 }
 
-/****************************** 견적서 html css ******************************/
-/* Quotation popup container */
-#quotation-popup-container {
-  padding: 20px;
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
 
-/* Title for the quotation popup */
-#quotation-popup-container h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* Quotations container */
-#quotations-container {
+/****************************** 견적서 css ******************************/
+/* 견적 컨테이너 */
+#quotation-container {
   display: flex;
-  flex-direction: column; /* 세로 정렬 */ 
-  gap: 20px; /* Add spacing between quotations */
-  margin-top: 20px;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* Center the blocks horizontally */
+  justify-content: flex-start; /* Ensure the blocks start from the top */
+  gap: 5px; /* Add spacing between the blocks */
+  margin-top: 10px;
 }
 
-/* Individual Quotation Block */
+/* 개별 견적 블록 */
 .quotation {
-  width: 100%;
+  width: 80%; /* 작은 화면에서는 전체 너비 사용 */
+  height: 30%;
+  margin: 5px 0; /* Center the block horizontally */
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* 내부 여백 줄이기 */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* 약간 작은 그림자 */
   transition: transform 0.3s;
-  display: flex;
+  display: none; /* Hide quotation blocks initially */
   flex-direction: column;
 }
 
+
 .quotation:hover {
-  transform: translateY(-10px); /* Slight hover effect */
+  transform: translateY(-5px); /* 호버 시 약간 작은 효과 */
 }
 
 /* 제목 스타일 */
 .quotation h3 {
-  margin: 0 0 15px 0; /* 제목과 아래 내용 간격 */
-  font-size: 1.5rem;
+  margin: 0 0 5px 0; /* 제목과 내용 사이 간격 줄이기 */
+  font-size: 1rem; /* 제목 폰트 크기 줄이기 */
   color: #333;
-  text-align: center; /* 왼쪽 정렬 */
+  text-align: center; /* 중앙 정렬 */
+}
+
+#quotation-modal h3 {
+  text-align: center; /* Center the text horizontally */
+  font-size: 1rem; /* Adjust font size as needed */
+  font-weight: bold; /* Make the text bold */
+  color: #333; /* Set text color */
+  margin-bottom: 0px; /* Add spacing below the title */
 }
 
 /* 이미지와 텍스트 정렬 */
 .quotation-content {
-
-  display: flex;
-  align-items: flex-start; /* 텍스트와 이미지의 위쪽 정렬 */
-  gap: 20px; /* 이미지와 텍스트 간격 */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Align image and text vertically */
+  justify-content: flex-start; /* Align items to the left */
+  gap: 20px; /* Add space between the image and text */
 }
 
-/* Image placeholder */
+
+/* 이미지 플레이스홀더 */
 .image-placeholder {
-  width: 150px;
-  height: 150px;
+  width: 100px; /* 이미지 크기 줄이기 */
+  height: 130px; /* 이미지 크기 줄이기 */
   background-color: #f0f0f0;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 6px; /* 둥근 모서리 크기 줄이기 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* 플레이스홀더 텍스트 크기 줄이기 */
   color: #666;
 }
 
 .image-placeholder img {
-  max-width: 100%; /* 이미지가 placeholder의 너비를 넘지 않도록 설정 */
-  max-height: 100%; /* 이미지가 placeholder의 높이를 넘지 않도록 설정 */
-  object-fit: cover; /* 이미지 비율을 유지하며 placeholder에 맞추기 */
-  border-radius: inherit; /* 부모의 border-radius를 상속 */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover; /* 비율 유지하며 플레이스홀더에 맞추기 */
+  border-radius: inherit; /* 부모 요소의 둥근 모서리 상속 */
 }
 
 /* 세부 정보 리스트 */
@@ -369,65 +575,72 @@ body {
 }
 
 .details li {
-  margin-bottom: 5px; /* 항목 간의 간격 */
+  margin-bottom: 4px; /* 항목 간 간격 줄이기 */
 }
 
 .details strong {
   color: #333;
 }
 
-.reason {
-  margin-top: 15px; /* 리스트와 이유 항목 사이 간격 */
-  font-size: 0.95rem; /* 이유 텍스트 크기 */
-  color: #555; /* 이유 텍스트 색상 */
+/* 선택된 견적 하이라이트 */
+.quotation.selected {
+  border: 2px solid #007BFF; /* 파란색 테두리로 강조 */
+  background-color: #f0f8ff; /* 연한 파란색 배경 */
+  transition: background-color 0.3s ease, border 0.3s ease;
 }
 
-.reason strong {
-  color: #333; /* "이유:" 강조 */
+/* 로딩 */
+/* 모달 중앙에 스피너 위치 */
+#loading-spinner {
+  position: absolute; /* 모달 기준으로 절대 위치 */
+  top: 50%; /* 수직 중앙 정렬 */
+  left: 47.5%; /* 수평 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 정확한 중앙 위치 조정 */
+  z-index: 1000; /* 다른 콘텐츠 위에 표시 */
+  text-align: center; /* 텍스트를 중앙 정렬 */
+  display: flex; /* 이미지와 텍스트를 블록으로 취급 */
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center; /* 이미지와 텍스트 정렬 */
+  gap: 10px; /* 이미지와 텍스트 간 간격 추가 */
 }
 
-/* Close button */
-#close-popup {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #db4a2b;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+/**************** 스피너 이미지 스타일 *******************/
+#loading-spinner img {
+  width: 100px; /* 스피너 크기 조정 */
+  height: 100px;
 }
 
-#close-popup:hover {
-  background-color: #b4321f;
+/* 스피너 아래 로딩 텍스트 스타일 */
+#loading-text {
+  font-size: 1rem; /* 텍스트 크기 */
+  color: #555; /* 텍스트 색상 */
+  margin-top: 10px; /* 이미지와의 간격 */
 }
 
-/* Scrollbars for small popups */
-#quotation-popup-container::-webkit-scrollbar {
-  width: 6px;
+/**************** placeholder 스타일 *******************/
+#placeholder-message {
+  position: absolute; /* 모달 기준으로 절대 위치 설정 */
+  top: 50%; /* 수직 중앙 정렬 */
+  left: 50%; /* 수평 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 정확한 중앙 위치로 이동 */
+  text-align: center; /* 텍스트를 중앙 정렬 */
+  display: flex; /* 플렉스박스를 사용하여 정렬 */
+  flex-direction: column; /* 이미지와 텍스트를 세로로 정렬 */
+  align-items: center; /* 이미지와 텍스트를 수평으로 정렬 */
+  gap: 10px; /* 이미지와 텍스트 사이 간격 설정 */
 }
 
-#quotation-popup-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* 플레이스홀더 이미지 스타일 */
+#placeholder-message img {
+  width: 150px;
+  height: 150px;
 }
 
-#quotation-popup-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
+/* 플레이스홀더 텍스트 스타일 */
+#placeholder-message p {
+  font-size: 1rem; /* 텍스트 크기 (로딩 텍스트와 동일) */
+  color: #555; /* 텍스트 색상 (로딩 텍스트와 동일) */
 }
 
-#quotation-popup-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+/**************** 부품 모달 스타일 *******************/
 
-/* Responsive design for popup */
-@media (max-width: 600px) {
-  #quotations-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .quotation {
-    width: 100%; /* Take full width on small screens */
-  }
-}
