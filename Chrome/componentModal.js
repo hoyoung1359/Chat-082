@@ -90,13 +90,13 @@ export function updateModalContent(modalId, details) {
     const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
     if (description) {
         if (details['부품 설명']) {
-            // If 부품 설명 is loaded, update the text and remove the placeholder
+            // 부품 설명으로 placeholder 대체
             description.textContent = details['부품 설명'];
-            description.classList.remove('placeholder'); // Remove placeholder styling if applicable
+            description.classList.remove('placeholder'); 
         } else {
-            // If 부품 설명 is not available, keep or add placeholder
-            description.textContent = '정보를 불러오는 중...'; // Placeholder text
-            description.classList.add('placeholder'); // Ensure placeholder class is added
+            // 부품 설명 없을 시 placeholder추가
+            description.textContent = '정보를 불러오는 중...';
+            description.classList.add('placeholder');
         }
     }
 }
