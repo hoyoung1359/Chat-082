@@ -94,9 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
                 addMessage('assistant', data.message);
-                addMessage('assistant', data.next_step);
+                //addMessage('assistant', data.next_step);
                 if (data.next_step) {
                   activateButton();
+                } else {
+                  deactivateButton();
                 }
 
             } catch (error) {
