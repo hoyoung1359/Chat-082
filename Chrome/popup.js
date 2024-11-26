@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   const addr = "3.36.11.154:8000";
+  const addr = "43.200.69.78:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
