@@ -112,8 +112,6 @@ export function updateAllModals(componentDetails) {
         "SSD": "ssd"            // SSD -> ssd-modal
     };
 
-    console.log("TEST")
-    console.log(componentDetails)
     // componentMapping의 각 키를 반복 처리
     for (const [key, modalId] of Object.entries(componentMapping)) {
         console.log(key)
@@ -122,4 +120,5 @@ export function updateAllModals(componentDetails) {
             updateModalContent(modalId, details); // 모달 업데이트 함수 호출
         }
     }
+    return;
 }

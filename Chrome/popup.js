@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModalsWithCloseButton();
 
 
-  const addr = "3.36.11.154:8000";
+  const addr = "43.200.69.78:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     } else {
-      console.log("모든 작업이 완료되었습니다.");
+      console.log("탐색 작업이 완료되었습니다.");
       console.log("최종 추출된 데이터:", extractedData);
       currentIndex = 0; // 처리 완료 후 인덱스 초기화
 
@@ -488,10 +488,6 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
 
-            console.log("Updating Modals.")
-            // 모델 업데이트
-            updateModalContent(response)
-            console.log("Modal Update complete.")
           }
 
         })
@@ -542,16 +538,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const processSearch = (tabId, searchInput) => {
     // const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
     console.log("Precess Search, DATA: ", searchInput)
-    const responseEntries = Object.keys(searchInput['response']);
+    const responseEntries = Object.keys(searchInput["response"]);
     console.log("ResponseEntries", responseEntries)
   
     let searchIndex = 0; // 현재 검색 중인 인덱스
   
+    // 데피니션
     const processPartSearch = () => {
       if (searchIndex < responseEntries.length) {
         const key = menus[searchIndex]; // 현재 메뉴
         // const productName = searchInput.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
         const productName = searchInput['response'][key]["제품명"]
+        console.log(productName)
   
         // 첫 번째 요청: 메뉴 클릭
         chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
@@ -585,6 +583,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
     };
+
+    console.log("담기 시작")
+    processPartSearch(); // 첫 번째 검색 시작
   };
 
 
