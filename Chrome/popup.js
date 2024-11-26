@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModalsWithCloseButton();
 
 
-  const addr = "3.35.15.142:8000";
+  const addr = "3.36.11.154:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
   const sendButton = document.getElementById('send-button');
+  let isActive = false; // 초기 상태는 false (비활성화)
   const resultButton = document.getElementById('result-button'); // 필터 버튼
 
   const applyButton = document.getElementById('apply-button'); // 필터 버튼
@@ -93,6 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
                 addMessage('assistant', data.message);
+                addMessage('assistant', data.next_step);
+                if (data.next_step) {
+                  activateButton();
+                }
 
             } catch (error) {
                 console.error('Error:', error);
@@ -212,6 +217,30 @@ document.addEventListener('DOMContentLoaded', () => {
       "파워": "테스트(정격)출력",
     };
     return categoryMapping[part] || "";
+  }
+
+  function updateButtonState() {
+    resultButton.disabled = !isActive; // isActive가 false면 버튼 비활성화, true면 활성화
+    // if (!isActive) {
+    //   resultButton.classList.add('disabled');
+    // } else {
+    //   resultButton.classList.remove('disabled');
+    // }
+  }
+  
+  // 초기 상태 설정
+  updateButtonState();
+  
+  // 상태를 변경하는 함수 (예: 어떤 조건이 충족되었을 때 호출)
+  function activateButton() {
+    isActive = true;
+    updateButtonState();
+  }
+  
+  // 버튼을 비활성화하는 함수
+  function deactivateButton() {
+    isActive = false;
+    updateButtonState();
   }
 
   // result-button 클릭 시 데이터를 가져와서 화면에 표시
