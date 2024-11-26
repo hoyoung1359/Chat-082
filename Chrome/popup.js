@@ -488,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
 
+            updateAllModals(response)
           }
 
         })
@@ -564,9 +565,10 @@ document.addEventListener('DOMContentLoaded', () => {
                       if (addButtonResponse && addButtonResponse.success) {
                         console.log(`${key}: '${productName}' 담기 성공`);
                         searchIndex++; // 다음 파트로 이동
-                        setTimeout(processPartSearch, 2000); // 2초 대기 후 다음 처리
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
                       } else {
                         console.error(`${key}: '${productName}' 담기 실패`);
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
                       }
                     });
                   }, 2000); // 검색 후 2초 대기

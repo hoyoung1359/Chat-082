@@ -103,6 +103,7 @@ export function updateModalContent(modalId, details) {
 
 // 모든 모달을 업데이트하는 함수
 export function updateAllModals(componentDetails) {
+    console.log("모달 업데이트")
     const componentMapping = {
         "CPU": "cpu",           // CPU -> cpu-modal
         "메인보드": "mainboard", // 메인보드 -> mainboard-modal
