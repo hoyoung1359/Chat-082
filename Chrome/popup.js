@@ -1,12 +1,13 @@
 import { setupQuotationModal } from './quotationModal.js';
-import { setupComponentModals, setupModalsWithCloseButton } from './componentModal.js';
+import { setupComponentModals, setupModalsWithCloseButton, updateModalContent, updateAllModals} from './componentModal.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   setupQuotationModal();
   setupComponentModals();
   setupModalsWithCloseButton();
 
-  const addr = "3.34.27.51:8000";
+
+  const addr = "3.35.15.142:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -370,6 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // document.getElementById(`${prefix}-reason`).textContent = data["이유"]; #TODO
   }
 
+  
   ////////////////////////////////////////////////// 자동 클릭 및 긁은 아이템 백으로 보내기  //////////////////////////////////////////////////////////////////////
   const tempButton = document.getElementById("temp-button");
 
@@ -377,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
   tempButton.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tabId = tabs[0].id;
+
       processInputs(tabId); // 입력 처리 시작
     });
   });
@@ -452,17 +455,21 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("선택 결과:", response);
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
+
+            console.log("Updating Modals.")
+            // 모델 업데이트
+            updateModalContent(response)
+            console.log("Modal Update complete.")
           }
+
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
-      
-      //  // 아이템 담기
-      // processSearch(tabId, backendResponse)
+    
     }
   };
-  
+
 
   ////////////////////////////////////////////////// 아이템 보내고 담을 아이템 받는 api //////////////////////////////////////////////////////////////////////
   // 백엔드로 데이터를 전송하는 함수
@@ -543,14 +550,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         console.log("모든 검색 작업 완료");
         searchIndex = 0; // 검색 인덱스 초기화
+        return;
       }
     };
-  
-    processPartSearch(); // 첫 번째 검색 시작
   };
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // document.getElementById('back-button').addEventListener('click', () => {
   //   // Logic to go back to the chat screen
   //   if (resultScreen.style.display === 'flex') {

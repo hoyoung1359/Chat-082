@@ -40,7 +40,7 @@
 
 /**************************************** 컴퓨터 부품 버튼 ********************************************************************************/
 /* 버튼 스타일 */
-#cpu-button, #mainboard-button, #memory-button, #gpu-button, #power-button, #ssd-button, #quotation-button, #settings-button {
+#cpu-button, #mainboard-button, #memory-button, #gpu-button, #power-button, #ssd-button, #quotation-button, #settings-button, #temp-button {
   width: 50px; /* 버튼 크기 (가로) */
   height: 50px; /* 버튼 크기 (세로) */
   background-color: #c46554c0; /* 기본 배경색 */
@@ -56,13 +56,15 @@
 }
 
 /* 버튼 호버 효과 */
-#cpu-button:hover, #mainboard-button:hover, #memory-button:hover, #gpu-button:hover, #power-button:hover, #ssd-button:hover, #quotation-button:hover, #settings-button:hover  {
+#cpu-button:hover, #mainboard-button:hover, #memory-button:hover, #gpu-button:hover, #power-button:hover,
+#ssd-button:hover, #quotation-button:hover, #settings-button:hover, #temp-button:hover  {
   transform: scale(1.1); /* 호버 시 버튼 확대 */
   background-color: #004d99; /* 호버 시 배경색 */
 }
 
 /* 버튼 내부 이미지 스타일 */
-#cpu-button img, #mainboard-button img, #memory-button img, #gpu-button img, #power-button img, #ssd-button img, #quotation-button img, #settings-button img{
+#cpu-button img, #mainboard-button img, #memory-button img, #gpu-button img,
+ #power-button img, #ssd-button img, #quotation-button img, #settings-button img, #temp-button img{
   max-width: 80%; /* 버튼 크기 대비 아이콘/이미지 최대 너비 */
   max-height: 80%; /* 버튼 크기 대비 아이콘/이미지 최대 높이 */
   object-fit: contain; /* 이미지 왜곡 방지 */
@@ -102,7 +104,8 @@
 #power-button:hover .info-box, 
 #ssd-button:hover .info-box,
 #quotation-button:hover .info-box,
-#settings-button:hover .info-box {
+#settings-button:hover .info-box,
+#temp-button:hover .info-box {
   visibility: visible; /* 툴팁 표시 */
   opacity: 1; /* 투명도 변경 */
 }
@@ -147,12 +150,12 @@
 .component-modal {
   display: none; /* 기본적으로 숨김 */
   position: fixed; /* 화면 중앙 고정 */
-  top: 50%; /* 화면 세로 정렬 */
+  top: 35%; /* 화면 세로 정렬 */
   left: calc(60px + 20px); /* 사이드바의 너비 + 간격 */
   transform: translateY(-50%); /* 중앙 정렬 (세로만) */
   width: 82%; /* 화면 너비의 70% */
   max-width: 800px; /* 최대 너비 */
-  height: 90%; /* 화면 높이의 60% */
+  height: 60%; /* 화면 높이의 60% */
   background-color: white; /* 배경색 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
   border-radius: 10px; /* 둥근 모서리 */
