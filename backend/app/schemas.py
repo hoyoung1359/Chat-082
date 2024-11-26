@@ -33,4 +33,5 @@ class UserQuestionRequest(BaseModel):
 
 class UserQuestionResponse(BaseModel):
     answer: str
-    edit: bool
+    part: str
+    filter: str

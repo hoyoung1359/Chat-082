@@ -71,7 +71,13 @@ class PCBudgetAssistant:
             self.user_states[user_id] = {
                 "budget": "없음",
                 "purpose": "없음",
-                "history": []
+                "history": [],
+                "CPU": {},
+                "메인보드": {},
+                "메모리": {},
+                "그래픽카드": {},
+                "파워": {},
+                "SSD": {}
             }
 
         user_state = self.user_states[user_id]
@@ -250,7 +256,20 @@ class PCBudgetAssistant:
         try:
             # LangChain 호출
             response = await self.chain.arun(user_message=prompt)
-            return make_string_to_dict(response)
+            dic = make_string_to_dict(response)
+            if user_state["CPU"] != {}:
+                user_state["CPU"] = dic["CPU"]
+            if user_state["메인보드"] != {}:
+                user_state["메인보드"] = dic["메인보드"]
+            if user_state["메모리"] != {}:
+                user_state["메모리"] = dic["메모리"]
+            if user_state["그래픽카드"] != {}:
+                user_state["그래픽카드"] = dic["그래픽카드"]
+            if user_state["파워"] != {}:
+                user_state["파워"] = dic["파워"]
+            if user_state["SSD"] != {}:
+                user_state["SSD"] = dic["SSD"]
+            return dic
         except Exception as e:
             print(f"GPT 호출 중 오류 발생: {e}")
             return {"response": "부품을 선택하는 중 오류가 발생했습니다. 다시 시도해주세요."}
@@ -271,25 +290,33 @@ class PCBudgetAssistant:
         budget = user_state["budget"]
         purpose = user_state["purpose"]
         history = user_state["history"]
-
+        cpu = json.dumps(user_state["CPU"])
+        mainboard = json.dumps(user_state["메인보드"])
+        memory = json.dumps(user_state["메모리"])
+        gpu = json.dumps(user_state["그래픽카드"])
+        power = json.dumps(user_state["파워"])
+        ssd = json.dumps(user_state["SSD"])
         # 추가 질문에 대한 적절한 답변을 생성하는 프롬프트
         prompt = (
-            f"다음은 이전 대화 내용입니다: {' '.join(history) if history else '이전 대화 내용 없음'}.\n"
-            f"현재 사용자의 예산 정보는 '{budget}', 사용 목적은 '{purpose}'입니다.\n"
-            f"사용자가 추가적으로 말한 내용은 다음과 같습니다: '{user_message}'\n"
             "친절하고 전문적인 답변을 제공하세요. "
             "답변은 가능한 간단하고 명확하게 작성하되, 사용자가 원하면 더 깊이 있는 설명을 추가하도록 유도하세요. "
             "질문이 PC 견적과 관련이 없더라도, 관련 주제로 대화를 다시 유도하는 답변을 추가해주세요."
+            "현재 사용자의 장바구니에 담겨 있는 부품은 다음과 같습니다:"
+            f"CPU: {cpu}, 메인보드: {mainboard}, 메모리: {memory}, 그래픽카드: {gpu}, 파워: {power}, SSD: {ssd}."
             """
-            편집에는 사용자가 현재 완성된 견적에 대해 특정 부품을 변경하거나 추가하고 싶은 의도가 있다고 확신하면 'O' 또는 'X'로 대답해주세요. 
+            편집에는 사용자가 현재 완성된 견적에 대해 특정 부품을 변경하거나 추가하고 싶은 의도가 있다고 확신하면 그 부품의 종류를 '편집부품'에 적고, 그렇지 않으면 'X'로 적어주세요.
             반드시 다음과 같은 JSON 구조로 대답해주세요.:
             {
             "대답": "당신(AI Assistant)의 대답",
-            "편집": ""
+            "편집부품": "CPU/메인보드/그래픽카드/메모리/SSD/파워X"
+            "시리즈명": "
             }
+            f"다음은 이전 대화 내용입니다: {' '.join(history) if history else '이전 대화 내용 없음'}.\n"
+            f"현재 사용자의 예산 정보는 '{budget}', 사용 목적은 '{purpose}'입니다.\n"
+            f"사용자가 추가적으로 말한 내용은 다음과 같습니다: '{user_message}'\n"
             """
         )
-
+        
         try:
             # LangChain 호출
             response = await self.chain.arun(user_message=prompt)
