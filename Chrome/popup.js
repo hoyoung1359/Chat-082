@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatContainer = document.getElementById('chat-container');
   const resultScreen = document.getElementById('result-screen');
   const startButton = document.getElementById('start-button');
-  const helpButton = document.getElementById('help-button');
+  const siteButton = document.getElementById('site-button');
   const homeButton = document.getElementById('home-button');
   const settingsButton = document.getElementById('settings-button');
   const settingsModal = document.getElementById('settings-modal');
@@ -138,10 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // "이어하기" 버튼 클릭 시 
-  helpButton.addEventListener('click', () => {
-    loadChatHistoryFromLocalStorage(); // 채팅 기록 불러오기
-    startScreen.style.display = 'none';
-    chatContainer.style.display = 'flex';
+  siteButton.addEventListener('click', () => {
+    window.open('https://www.compuzone.co.kr/estimate/self.htm', '_blank'); // '_blank'는 새 탭에서 열기
+    //loadChatHistoryFromLocalStorage(); // 채팅 기록 불러오기
+    // startScreen.style.display = 'none';
+    // chatContainer.style.display = 'flex';
   });
 
   // "홈" 버튼 클릭 시 시작 화면으로 돌아가기

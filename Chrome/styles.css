@@ -275,7 +275,7 @@
   padding-bottom: 50px; /* 하단 여백 추가 */
 }
 
-#start-button, #help-button {
+#start-button, #site-button {
   padding: 10px 20px;
   margin: 5px;
   background-color: #db4a2b;
@@ -286,7 +286,7 @@
   font-size: 16px;
 }
 
-#start-button:hover, #help-button:hover {
+#start-button:hover, #site-button:hover {
   background-color: #0066cc;
 }
 
