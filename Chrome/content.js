@@ -132,24 +132,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
     if (message.action === "clickAddButton") {
-        const rows = document.querySelectorAll(productRowSelector);
-
-        let success = false;
-        rows.forEach((row) => {
+      const rows = document.querySelectorAll(productRowSelector); // Select product rows
+      let success = false; // Track success status
+    
+      // Iterate over product rows to find a match
+      rows.forEach((row) => {
         const productNameElement = row.querySelector(".product_name p.ntMB14");
-        const addButton = row.querySelector("button.bl_btn"); // "담기" 버튼 동적 탐색
-
-        // 제품 이름이 일치하면 "담기" 버튼 클릭
+        const addButton = row.querySelector("button.bl_btn"); // Locate the "Add" button
+    
+        // If product name matches and "Add" button exists, click the button
         if (productNameElement && productNameElement.textContent.trim() === message.productName && addButton) {
-            addButton.click();
-            success = true;
-        }z
-        });
-
-        sendResponse({ success });
-        return true; // 비동기 응답 지원
+          addButton.click();
+          success = true; // Update success flag
+        }
+      });
+    
+      // Send the response after the loop
+      sendResponse({ success });
+    
+      return; // No need for "return true" since the response is sent synchronously
     }
 });
+
+
 
 ////////////////////////////////////////////////// 자동 클릭  /////////////////////////////////////////////////////////////////////////////////////////////////////////
   
