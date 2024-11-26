@@ -1,18 +1,19 @@
 import { setupQuotationModal } from './quotationModal.js';
-import { setupComponentModals, setupModalsWithCloseButton } from './componentModal.js';
+import { setupComponentModals, setupModalsWithCloseButton, updateModalContent, updateAllModals} from './componentModal.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   setupQuotationModal();
   setupComponentModals();
   setupModalsWithCloseButton();
 
-  const addr = "3.35.15.142:8000";
+
+  const addr = "3.36.11.154:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
   const resultScreen = document.getElementById('result-screen');
   const startButton = document.getElementById('start-button');
-  const helpButton = document.getElementById('help-button');
+  const siteButton = document.getElementById('site-button');
   const homeButton = document.getElementById('home-button');
   const settingsButton = document.getElementById('settings-button');
   const settingsModal = document.getElementById('settings-modal');
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatMessages = document.getElementById('chat-messages');
   const userInput = document.getElementById('user-input');
   const sendButton = document.getElementById('send-button');
+  let isActive = false; // 초기 상태는 false (비활성화)
   const resultButton = document.getElementById('result-button'); // 필터 버튼
 
   const applyButton = document.getElementById('apply-button'); // 필터 버튼
@@ -92,6 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
                 addMessage('assistant', data.message);
+                //addMessage('assistant', data.next_step);
+                if (data.next_step) {
+                  activateButton();
+                } else {
+                  deactivateButton();
+                }
 
             } catch (error) {
                 console.error('Error:', error);
@@ -137,10 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // "이어하기" 버튼 클릭 시 
-  helpButton.addEventListener('click', () => {
-    loadChatHistoryFromLocalStorage(); // 채팅 기록 불러오기
-    startScreen.style.display = 'none';
-    chatContainer.style.display = 'flex';
+  siteButton.addEventListener('click', () => {
+    window.open('https://www.compuzone.co.kr/estimate/self.htm', '_blank'); // '_blank'는 새 탭에서 열기
+    //loadChatHistoryFromLocalStorage(); // 채팅 기록 불러오기
+    // startScreen.style.display = 'none';
+    // chatContainer.style.display = 'flex';
   });
 
   // "홈" 버튼 클릭 시 시작 화면으로 돌아가기
@@ -210,6 +219,30 @@ document.addEventListener('DOMContentLoaded', () => {
       "파워": "테스트(정격)출력",
     };
     return categoryMapping[part] || "";
+  }
+
+  function updateButtonState() {
+    resultButton.disabled = !isActive; // isActive가 false면 버튼 비활성화, true면 활성화
+    // if (!isActive) {
+    //   resultButton.classList.add('disabled');
+    // } else {
+    //   resultButton.classList.remove('disabled');
+    // }
+  }
+  
+  // 초기 상태 설정
+  updateButtonState();
+  
+  // 상태를 변경하는 함수 (예: 어떤 조건이 충족되었을 때 호출)
+  function activateButton() {
+    isActive = true;
+    updateButtonState();
+  }
+  
+  // 버튼을 비활성화하는 함수
+  function deactivateButton() {
+    isActive = false;
+    updateButtonState();
   }
 
   // result-button 클릭 시 데이터를 가져와서 화면에 표시
@@ -370,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // document.getElementById(`${prefix}-reason`).textContent = data["이유"]; #TODO
   }
 
+  
   ////////////////////////////////////////////////// 자동 클릭 및 긁은 아이템 백으로 보내기  //////////////////////////////////////////////////////////////////////
   const tempButton = document.getElementById("temp-button");
 
@@ -377,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
   tempButton.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tabId = tabs[0].id;
+
       processInputs(tabId); // 입력 처리 시작
     });
   });
@@ -452,17 +487,21 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("선택 결과:", response);
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
+
+            console.log("Updating Modals.")
+            // 모델 업데이트
+            updateModalContent(response)
+            console.log("Modal Update complete.")
           }
+
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
-      
-      //  // 아이템 담기
-      // processSearch(tabId, backendResponse)
+    
     }
   };
-  
+
 
   ////////////////////////////////////////////////// 아이템 보내고 담을 아이템 받는 api //////////////////////////////////////////////////////////////////////
   // 백엔드로 데이터를 전송하는 함수
@@ -543,14 +582,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         console.log("모든 검색 작업 완료");
         searchIndex = 0; // 검색 인덱스 초기화
+        return;
       }
     };
-  
-    processPartSearch(); // 첫 번째 검색 시작
   };
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // document.getElementById('back-button').addEventListener('click', () => {
   //   // Logic to go back to the chat screen
   //   if (resultScreen.style.display === 'flex') {

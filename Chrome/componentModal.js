@@ -67,3 +67,59 @@ export function setupModalsWithCloseButton() {
       });
     });
   }
+
+
+// // 개별 모달의 내용을 업데이트하는 함수
+// export function updateModalContent(modalId, details) {
+//     const modal = document.getElementById(`${modalId}-modal`);
+//     if (!modal) return; // 모달이 존재하지 않으면 함수 종료
+
+//     // 부품 설명 업데이트
+//     const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
+//     if (description) {
+//         description.textContent = details['부품 설명']; // 부품 설명 데이터를 업데이트
+//     }
+// }
+
+// 개별 모달의 내용을 업데이트하는 함수
+export function updateModalContent(modalId, details) {
+    const modal = document.getElementById(`${modalId}-modal`);
+    if (!modal) return; // 모달이 존재하지 않으면 함수 종료
+
+    // 부품 설명 업데이트
+    const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
+    if (description) {
+        if (details['부품 설명']) {
+            // 부품 설명으로 placeholder 대체
+            description.textContent = details['부품 설명'];
+            description.classList.remove('placeholder'); 
+        } else {
+            // 부품 설명 없을 시 placeholder추가
+            description.textContent = '정보를 불러오는 중...';
+            description.classList.add('placeholder');
+        }
+    }
+}
+
+// 모든 모달을 업데이트하는 함수
+export function updateAllModals(componentDetails) {
+    const componentMapping = {
+        "CPU": "cpu",           // CPU -> cpu-modal
+        "메인보드": "mainboard", // 메인보드 -> mainboard-modal
+        "메모리": "memory",      // 메모리 -> memory-modal
+        "그래픽카드": "gpu",     // 그래픽카드 -> gpu-modal
+        "파워": "power",         // 파워 -> power-modal
+        "SSD": "ssd"            // SSD -> ssd-modal
+    };
+
+    console.log("TEST")
+    console.log(componentDetails)
+    // componentMapping의 각 키를 반복 처리
+    for (const [key, modalId] of Object.entries(componentMapping)) {
+        console.log(key)
+        const details = componentDetails[key]; // componentDetails에서 해당 부품 정보 가져오기
+        if (details) {
+            updateModalContent(modalId, details); // 모달 업데이트 함수 호출
+        }
+    }
+}
