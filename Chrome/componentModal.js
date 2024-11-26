@@ -69,6 +69,18 @@ export function setupModalsWithCloseButton() {
   }
 
 
+// // 개별 모달의 내용을 업데이트하는 함수
+// export function updateModalContent(modalId, details) {
+//     const modal = document.getElementById(`${modalId}-modal`);
+//     if (!modal) return; // 모달이 존재하지 않으면 함수 종료
+
+//     // 부품 설명 업데이트
+//     const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
+//     if (description) {
+//         description.textContent = details['부품 설명']; // 부품 설명 데이터를 업데이트
+//     }
+// }
+
 // 개별 모달의 내용을 업데이트하는 함수
 export function updateModalContent(modalId, details) {
     const modal = document.getElementById(`${modalId}-modal`);
@@ -77,10 +89,16 @@ export function updateModalContent(modalId, details) {
     // 부품 설명 업데이트
     const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
     if (description) {
-        description.textContent = details['부품 설명']; // 부품 설명 데이터를 업데이트
+        if (details['부품 설명']) {
+            // If 부품 설명 is loaded, update the text and remove the placeholder
+            description.textContent = details['부품 설명'];
+            description.classList.remove('placeholder'); // Remove placeholder styling if applicable
+        } else {
+            // If 부품 설명 is not available, keep or add placeholder
+            description.textContent = '정보를 불러오는 중...'; // Placeholder text
+            description.classList.add('placeholder'); // Ensure placeholder class is added
+        }
     }
-
-    // 필요한 경우 다른 모달 콘텐츠 업데이트 로직 추가 가능
 }
 
 // 모든 모달을 업데이트하는 함수
