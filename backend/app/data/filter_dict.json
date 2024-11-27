@@ -11,9 +11,14 @@
     "메인보드": [
         "AMD-X670E",
         "AMD-X570",
+<<<<<<< Updated upstream
         "AMD-B550",
         "AMD-B550M",
         "AMD-B450",
+=======
+        "AMD-X670",
+        "AMD-B650",
+>>>>>>> Stashed changes
         "인텔-Z790",
         "인텔-B760",
         "인텔-H610",
