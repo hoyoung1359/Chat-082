@@ -116,7 +116,7 @@ export function updateAllModals(componentDetails) {
     // componentMapping의 각 키를 반복 처리
     for (const [key, modalId] of Object.entries(componentMapping)) {
         console.log(key)
-        const details = componentDetails[key]; // componentDetails에서 해당 부품 정보 가져오기
+        const details = componentDetails['response'][key]; // componentDetails에서 해당 부품 정보 가져오기
         if (details) {
             updateModalContent(modalId, details); // 모달 업데이트 함수 호출
         }

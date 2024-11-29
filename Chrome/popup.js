@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupQuotationModal();
   setupComponentModals();
   setupModalsWithCloseButton();
-
+  
 
   const addr = "43.200.69.78:8000";
 
@@ -418,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 샘플 인풋, #TODO 사용자 선택 격적으로 추후 출력으로 교체
   let currentIndex = 0;
+  let modalInput = {};
   const extractedData = {}; // 저장할 딕셔너리
   
   const processInputs = (tabId) => {
@@ -487,15 +488,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("선택 결과:", response);
             currentIndex = 0; // 처리 완료 후 인덱스 초기화
             processSearch(tabId, response); // 검색 프로세스 시작
-
-            updateAllModals(response)
+            modalInput = response
           }
 
         })
         .catch((err) => {
           console.error("예상치 못한 에러:", err);
         });
-    
     }
   };
 
@@ -539,6 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const processSearch = (tabId, searchInput) => {
     // const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
     console.log("Precess Search, DATA: ", searchInput)
+    updateAllModals(searchInput);
     const responseEntries = Object.keys(searchInput["response"]);
     console.log("ResponseEntries", responseEntries)
   
@@ -582,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         console.log("모든 검색 작업 완료");
         searchIndex = 0; // 검색 인덱스 초기화
+        updateAllModals(modalInput);
         return;
       }
     };
