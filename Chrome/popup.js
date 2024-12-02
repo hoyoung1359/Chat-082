@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModalsWithCloseButton();
   
 
-  const addr = "15.165.42.103:8000";
+  const addr = "3.38.138.13:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -102,34 +102,34 @@ document.addEventListener('DOMContentLoaded', () => {
                   deactivateButton();
                 }
 
-                //// 제품 수정. TODO. "temp"를 "data"로 교체 
-                const temp = {
-                  "message": "안녕하세요!",
-                  "budget": "100만원",
-                  "purpose": "롤",
-                  "next_step": true,
-                  "편집": {
-                      "bool": true,
-                      "CPU": "코어 i3",
-                      "메모리": "8GB",
-                  }
-                }
+                // //// 제품 수정. TODO. "temp"를 "data"로 교체 
+                // const temp = {
+                //   "message": "안녕하세요!",
+                //   "budget": "100만원",
+                //   "purpose": "롤",
+                //   "next_step": true,
+                //   "편집": {
+                //       "bool": true,
+                //       "CPU": "코어 i3",
+                //       "메모리": "8GB",
+                //   }
+                // }
 
-                // 제품 수정 
-                let editInput = {};
-                if (data.편집.bool == true){
-                  console.log("편집 필요")
-                  editInput = loadEditInput((data.편집))
-                  console.log("전천리된 Edit 정보: ", editInput)
-                  let editmenus = Object.keys(editInput);
-                  console.log("수정이 필요한 부품: ", editmenus);
+                // // 제품 수정 
+                // let editInput = {};
+                // if (data.편집.bool == true){
+                //   console.log("편집 필요")
+                //   editInput = loadEditInput((data.편집))
+                //   console.log("전천리된 Edit 정보: ", editInput)
+                //   let editmenus = Object.keys(editInput);
+                //   console.log("수정이 필요한 부품: ", editmenus);
 
-                  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    const tabId = tabs[0].id;
+                //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                //     const tabId = tabs[0].id;
               
-                    editComponent(tabId, editInput, editmenus); // 입력 처리 시작
-                  });
-                }
+                //     editComponent(tabId, editInput, editmenus); // 입력 처리 시작
+                //   });
+                // }
     
 
               
@@ -568,10 +568,10 @@ document.addEventListener('DOMContentLoaded', () => {
   ////////////////////////////////////////////////// 자동 클릭 및 선택된 아이템 담기  //////////////////////////////////////////////////////////////////////
 
   const processSearch = (tabId, searchInput) => {
-    // const responseEntries = Object.entries(searchInput).filter(([key]) => !key.endsWith("이유")); // '이유' 키 제외
+    const responseEntries = Object.keys(searchInput.response).filter(key => !key.endsWith("이유"));
     console.log("Precess Search, DATA: ", searchInput)
-    updateAllModals(searchInput);
-    const responseEntries = Object.keys(searchInput["response"]);
+    // updateAllModals(searchInput);
+    // const responseEntries = Object.keys(searchInput["response"]);
     console.log("ResponseEntries", responseEntries)
   
     let searchIndex = 0; // 현재 검색 중인 인덱스
@@ -581,7 +581,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (searchIndex < responseEntries.length) {
         const key = menus[searchIndex]; // 현재 메뉴
         // const productName = searchInput.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
-        const productName = searchInput['response'][key]["제품명"]
+        // const productName = searchInput['response'][key]["제품명"]
+        const productName = searchInput['response'][key]
         console.log(productName)
   
         // 첫 번째 요청: 메뉴 클릭
