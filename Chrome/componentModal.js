@@ -89,9 +89,9 @@ export function updateModalContent(modalId, details) {
     // 부품 설명 업데이트
     const description = modal.querySelector(`div:nth-child(3) > p`); // 두 번째 섹션의 <p> 태그 선택
     if (description) {
-        if (details['부품 설명']) {
+        if (details) {
             // 부품 설명으로 placeholder 대체
-            description.textContent = details['부품 설명'];
+            description.textContent = details;
             description.classList.remove('placeholder'); 
         } else {
             // 부품 설명 없을 시 placeholder추가
@@ -116,7 +116,7 @@ export function updateAllModals(componentDetails) {
     // componentMapping의 각 키를 반복 처리
     for (const [key, modalId] of Object.entries(componentMapping)) {
         console.log(key)
-        const details = componentDetails['response'][key]; // componentDetails에서 해당 부품 정보 가져오기
+        const details = componentDetails['response'][`${key}이유`]; // componentDetails에서 해당 부품 정보 가져오기
         if (details) {
             updateModalContent(modalId, details); // 모달 업데이트 함수 호출
         }
