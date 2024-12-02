@@ -102,34 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
                   deactivateButton();
                 }
 
-                // //// 제품 수정. TODO. "temp"를 "data"로 교체 
-                // const temp = {
-                //   "message": "안녕하세요!",
-                //   "budget": "100만원",
-                //   "purpose": "롤",
-                //   "next_step": true,
-                //   "편집": {
-                //       "bool": true,
-                //       "CPU": "코어 i3",
-                //       "메모리": "8GB",
-                //   }
-                // }
 
-                // // 제품 수정 
-                // let editInput = {};
-                // if (data.편집.bool == true){
-                //   console.log("편집 필요")
-                //   editInput = loadEditInput((data.편집))
-                //   console.log("전천리된 Edit 정보: ", editInput)
-                //   let editmenus = Object.keys(editInput);
-                //   console.log("수정이 필요한 부품: ", editmenus);
+                // 제품 수정 
+                let editInput = {};
+                if (data.edit.bool == true){
+                  console.log("편집 필요")
+                  editInput = loadEditInput((data.edit))
+                  console.log("전천리된 Edit 정보: ", editInput)
+                  let editmenus = Object.keys(editInput);
+                  console.log("수정이 필요한 부품: ", editmenus);
 
-                //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                //     const tabId = tabs[0].id;
+                  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const tabId = tabs[0].id;
               
-                //     editComponent(tabId, editInput, editmenus); // 입력 처리 시작
-                //   });
-                // }
+                    editComponent(tabId, editInput, editmenus); // 입력 처리 시작
+                  });
+                }
     
 
               
@@ -433,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`${prefix}-ssd`).textContent = data["SSD"];
     document.getElementById(`${prefix}-power`).textContent = data["파워"];
     document.getElementById(`${prefix}-main`).textContent = data["메인보드"];
-    // document.getElementById(`${prefix}-reason`).textContent = data["이유"]; #TODO
+    document.getElementById(`${prefix}-reason`).textContent = data["이유"];
   }
 
   
@@ -629,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 이걸로 "편집" 항목을 받아서 변환
   function loadEditInput(editData) {
-    const input = { "편집": {} }; // 새로운 입력 데이터 초기화
+    const input = { "edit": {} }; // 새로운 입력 데이터 초기화
     for (const [key, value] of Object.entries(editData)) {
       if (key !== "bool") { // 이유 제외
         let cpuType = "";
@@ -638,14 +626,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (key === "CPU" && value.includes("i")) {
           cpuType = "INTEL";
         }
-        input["편집"][key] = {
+        input["edit"][key] = {
           upperCategory: getUpperCategory(key, cpuType), // 필요한 상위 카테고리 제공
           value: value,
         };
       }
     }
     console.log("편집 데이터:", input);
-    return input["편집"]; // 'series'와 호환되는 데이터 반환
+    return input["edit"]; // 'series'와 호환되는 데이터 반환
   }
 
   
