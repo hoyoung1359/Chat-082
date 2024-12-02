@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.schemas import ChatRequest, ChatResponse, EstimateRequest, EstimateResponse, PartsRequest, PartsResponse, UserQuestionRequest, UserQuestionResponse
-from app.services import PCBudgetAssistant
+from app.services import PCAssistant
 import os
 from dotenv import load_dotenv
 
@@ -10,7 +10,7 @@ load_dotenv()
 chatbot_router = APIRouter(prefix="/chatbot", tags=["Chatbot"])
 
 # PCBudgetAssistant 초기화
-chatbot = PCBudgetAssistant(api_key=os.environ.get("OPENAI_API_KEY"))
+chatbot = PCAssistant(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 @chatbot_router.post("/message", response_model=ChatResponse)
@@ -66,22 +66,3 @@ async def select_parts(parts_request: PartsRequest):
         return PartsResponse(response=response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"부품 선택 오류: {e}")
-
-
-@chatbot_router.post("/user_question", response_model=UserQuestionResponse)
-async def user_question(question_request: UserQuestionRequest):
-    """
-    사용자의 기습 질문에 답변합니다.
-    """
-    try:
-        response = await chatbot.user_question(
-            user_id= question_request.user_id,
-            question= question_request.question
-        )
-        if response["edit"] == 'O':
-            edit = True
-        else:
-            edit = False
-        return PartsResponse(answer=response["answer"], edit=edit)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"사용자 질문 오류: {e}")

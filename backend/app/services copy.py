@@ -86,7 +86,26 @@ SYSTEM_PROMPTS = {
             "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. 부품을 선택하는데 참고할 만한 내용이 있다면 참고해주세요."
             "이전 대화 내용: {history}"
         ),
-
+    "question": (
+            "사용자의 예산은 {budget}이며, 사용 목적은 '{purpose}'입니다. "
+            "현재 사용자에게 이미 PC 견적을 추천해준 상황이고, 견적 사이트 장바구니에 해당 부품들이 담겨있습니다. "
+            "담긴 부품: CPU: {cpu}, 메인보드: {mainboard}, 메모리: {memory}, 그래픽카드: {gpu}, 파워: {power}, SSD: {ssd}"
+            "사용자의 추가 질문에 적절한 대답을 생성해주세요. "
+            "사용자의 추가 질문: {user_message}"
+            "당신이 선택할 수 있는 부품 시리즈는 {filter_info}의 내용 속에 있습니다."
+            "만약 사용자의 추가 질문에 부품을 다른 것으로 바꿔달라는 요청이 포함되어 있다면, 부품종류와 해당 부품의 바꿀 시리즈를 출력해 부품을 변경해주세요. 시리즈명이 같고 세부 부품만 변경할 경우, 현재 담긴 부품과 같은 시리즈명을 출력해도 됩니다. 포함되어 있지 않다면, 부품종류에 'X'를 입력해주세요. "
+            "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. 부품을 선택하는데 참고할 만한 내용이 있다면 참고해주세요. "
+            "이전 대화 내용: {history}"
+            "답변은 대화 형식이 아니라 반드시 다음과 같은 JSON 구조로 대답해주세요. "
+            "'부품종류'와 '부품시리즈'의 value는 리스트 형식으로 여러 개의 부품을 선택할 수 있습니다. "
+            """
+            {
+                "대답": "당신(AI Assistant)의 대답",
+                "부품종류": "편집할 부품 종류 [CPU, 메인보드, 메모리, 그래픽카드, 파워, SSD, X] 중 여러개 선택 가능",
+                "부품시리즈": "해당 종류의 부품을 선택할 시리즈명"
+            }
+            """
+        )
 }
 
 def make_string_to_dict(string: str) -> dict:
@@ -158,15 +177,23 @@ class PCBudgetAssistant:
                 "메모리": {},
                 "그래픽카드": {},
                 "파워": {},
-                "SSD": {}
+                "SSD": {},
+                "phase": 1
             }
         user_state = self.user_states[user_id]
-        budget, purpose, history = user_state["budget"], user_state["purpose"], user_state["history"]
-        if branch == "정보수집":
-            return await self.process_user_input(user_id, user_message)
+        if branch == "메시지":
+            if user_state["phase"] == 1:
+                return await self.process_user_input(user_id, user_message)
+            elif user_state["phase"] == 2:
+                return await self.answer_user_question(user_id, user_message)
+        elif branch == "견적뽑기":
+            return await self.generate_estimate(user_id)
+        elif branch == "부품선택":
+            user_state["phase"] = 2
+            return await self.select_parts(user_id, user_message)
         
 
-    async def process_user_input(self, budget: str, purpose:str, history: List, user_message: str) -> dict:
+    async def process_user_input(self, user_id: str, user_message: str) -> dict:
         """
         사용자 입력을 처리하여 예산 및 사용 목적을 추출
         Args:
@@ -175,6 +202,10 @@ class PCBudgetAssistant:
         Returns:
             dict: 응답 텍스트와 추출된 예산 및 목적
         """
+        user_state = self.user_states[user_id]
+        budget = user_state["budget"]
+        purpose = user_state["purpose"]
+        history = user_state["history"]
         prompt = SYSTEM_PROMPTS["message"].format(
             budget=budget,
             purpose=purpose,
@@ -238,50 +269,7 @@ class PCBudgetAssistant:
         if budget == "없음" or purpose == "없음":
             print("예산 또는 목적 정보가 없습니다.")
             return {"response": "견적을 생성하려면 예산과 목적이 필요합니다. 추가 정보를 입력해주세요."}
-
-        # GPT에게 요청할 입력 메시지 생성
-        prompt = (
-            f"사용자의 예산은 {budget}이며, 사용 목적은 '{purpose}'입니다. "
-            f"{filter_info}의 내용 속에 있는 시리즈만으로 각 부품의 시리즈를 골라서 견적을 완성하되, 반드시 예산을 초과하지 않는 선에서 사용 목적에 맞게 선택해주세요. "
-            "총 세 종류의 견적을 제시해주세요. 가성비, 밸런스, 고성능 순으로 견적을 제시해주세요. "
-            "모든 견적은 호환성을 고려해 부품을 선택해야 합니다. "
-            "출력 예시는 다음과 같습니다. 예시일 뿐이므로 구조를 참고하고 내용은 무시하세요. "
-            """
-            {
-                "가성비": {
-                "CPU": "라이젠 5",
-                "메모리": "16GB",
-                "그래픽카드": "GTX 1660 SUPER",
-                "메인보드": "AMD-B450",
-                "SSD": "480~512GB",
-                "파워": "400~499W"
-                "이유": "배틀그라운드를 중간 옵션 이상에서 즐길 수 있도록 GTX 1660 SUPER 그래픽카드를 사용하는 견적을 추천하였습니다. 이 구성은 60fps 이상의 안정적인 성능을 제공하며, 발열을 최소화하여 장시간 쾌적한 게임 환경을 보장합니다. 예산 120만 원 내에서 제안하는 가성비 견적입니다."
-                },
-                "밸런스": {
-                "CPU": "라이젠 5",
-                "메모리": "16GB",
-                "그래픽카드": "RTX 3060Ti",
-                "메인보드": "AMD-B550",
-                "SSD": "960GB~1TB",
-                "파워": "500~599W"
-                "이유": "배틀그라운드를 고옵션에서 즐길 수 있도록 RTX 3060Ti 그래픽카드를 사용하는 견적을 추천하였습니다. 이 구성은 120fps 이상의 성능을 제공하며, 고사양 게임에도 부드러운 그래픽을 제공합니다. 예산 150만 원 내에서 제안하는 밸런스 견적입니다."
-                },
-                "고성능": {
-                "CPU": "라이젠 7",
-                "메모리": "32GB",
-                "그래픽카드": "RTX 4080 SUPER",
-                "메인보드": "AMD-X570",
-                "SSD": "1.5~4TB",
-                "파워": "700~799W"
-                "이유": "배틀그라운드를 고옵션에서 즐길 수 있도록 RTX 4080 SUPER을 추천하였습니다. 120fps 이상의 성능과 부드러운 그래픽을 제공하며, 장시간 안정적인 게임 플레이가 가능합니다. 고사양 게임에 최적화된 구성입니다."
-            }
-            }
-            """
-            "단, 대화 형식이 아니라 출력 예시의 json 구조를 반드시 맞춰서 견적을 제시해주세요." 
-            "이유에는 각 견적의 부품들 선택 이유 모두를 간단히 작성해주세요. "
-            "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. PC 견적을 맞추는데 참고할 만한 내용만 참고해 주세요. "
-            f"{' '.join(history) if history else '이전 대화 내용 없음'}."
-        )
+        prompt = SYSTEM_PROMPTS["estimate"].format(budget=budget, purpose=purpose, filter_info=filter_info, history=" ".join(history) if history else "이전 대화 내용 없음")
 
         try:
             # LangChain 호출
@@ -311,36 +299,23 @@ class PCBudgetAssistant:
         budget = user_state["budget"]
         purpose = user_state["purpose"]
         history = user_state["history"]
-        prompt = (
-            f"사용자의 예산은 {budget}이며, 사용 목적은 '{purpose}'입니다. "
-            "사용자의 예산과 목적에 맞는 부품들을 선택해주세요. "
-            "예산을 최대한 초과하지 않아야 합니다. "
-            f"부품 리스트는 다음과 같습니다:{parts_data}"
-            "아래는 PC의 출력 형식이며, 예시일 뿐이므로 구조를 참고하세요. "
-            """
-            { "CPU": { "제품명": "", "부품 설명": "", "상세 스펙": { "소켓": "", "공정": "", "코어": "", "기본 클럭": "", "최대 클럭": "", "메모리 규격": "", }, "선택 이유": "" }, "메인보드": { "제품명": "", "부품 설명": "", "상세 스펙": { "소켓": "", "폼팩터": "", "메모리 지원": "", "확장 슬롯": "", "네트워크": "", }, "선택 이유": "" }, "메모리": { "제품명": "", "부품 설명": "", "상세 스펙": { "타입": "", "용량": "", "클럭 속도": "", "레이턴시": "", }, "선택 이유": "" }, "그래픽카드": { "제품명": "", "부품 설명": "", "상세 스펙": { "메모리": "", "코어 클럭": "", "전력 소모": "", "출력 포트": "", }, "선택 이유": "" }, "파워": { "제품명": "", "부품 설명": "", "상세 스펙": { "출력 용량": "", "효율 등급": "", "케이블 타입": "", "팬 크기": "", "보증 기간": "", }, "선택 이유": "" }, "SSD": { "제품명": "", "부품 설명": "", "상세 스펙": { "용량": "", "인터페이스": "", "읽기 속도": "", "쓰기 속도": "", "폼팩터": "", }, "선택 이유": "" } }
-            """
-            "단, 대화 형식이 아니라 출력 예시의 json 구조를 반드시 맞춰서 부품 리스트에 있는 실제 부품명만을 선택해주세요."
-            "이왕이면 메모리와 SSD는 삼성의 제품, 파워는 마이크로닉스의 제품을 선택하세요."
-            "다음은 사용자와 AI 어시트턴트의 이전 대화 내용입니다. 부품을 선택하는데 참고할 만한 내용이 있다면 참고해주세요."
-            f"{' '.join(history) if history else '이전 대화 내용 없음'}."
-        )
+        prompt = SYSTEM_PROMPTS ["parts"].format(budget=budget, purpose=purpose, parts_data=parts_data, history=" ".join(history) if history else "이전 대화 내용 없음")
         try:
             # LangChain 호출
             response = await self.chain.arun(user_message=prompt)
             dic = make_string_to_dict(response)
             if user_state["CPU"] != {}:
-                user_state["CPU"] = dic["CPU"]
+                user_state["CPU"] = dic["CPU"]["제품명"]
             if user_state["메인보드"] != {}:
-                user_state["메인보드"] = dic["메인보드"]
+                user_state["메인보드"] = dic["메인보드"]["제품명"]
             if user_state["메모리"] != {}:
-                user_state["메모리"] = dic["메모리"]
+                user_state["메모리"] = dic["메모리"]["제품명"]
             if user_state["그래픽카드"] != {}:
-                user_state["그래픽카드"] = dic["그래픽카드"]
+                user_state["그래픽카드"] = dic["그래픽카드"]["제품명"]
             if user_state["파워"] != {}:
-                user_state["파워"] = dic["파워"]
+                user_state["파워"] = dic["파워"]["제품명"]
             if user_state["SSD"] != {}:
-                user_state["SSD"] = dic["SSD"]
+                user_state["SSD"] = dic["SSD"]["제품명"]
             return dic
         except Exception as e:
             print(f"GPT 호출 중 오류 발생: {e}")
@@ -369,26 +344,19 @@ class PCBudgetAssistant:
         power = json.dumps(user_state["파워"])
         ssd = json.dumps(user_state["SSD"])
         # 추가 질문에 대한 적절한 답변을 생성하는 프롬프트
-        prompt = (
-            "친절하고 전문적인 답변을 제공하세요. "
-            "답변은 가능한 간단하고 명확하게 작성하되, 사용자가 원하면 더 깊이 있는 설명을 추가하도록 유도하세요. "
-            "질문이 PC 견적과 관련이 없더라도, 관련 주제로 대화를 다시 유도하는 답변을 추가해주세요."
-            "현재 사용자의 장바구니에 담겨 있는 부품은 다음과 같습니다:"
-            f"CPU: {cpu}, 메인보드: {mainboard}, 메모리: {memory}, 그래픽카드: {gpu}, 파워: {power}, SSD: {ssd}."
-            """
-            편집에는 사용자가 현재 완성된 견적에 대해 특정 부품을 변경하거나 추가하고 싶은 의도가 있다고 확신하면 그 부품의 종류를 '편집부품'에 적고, 그렇지 않으면 'X'로 적어주세요.
-            반드시 다음과 같은 JSON 구조로 대답해주세요.:
-            {
-            "대답": "당신(AI Assistant)의 대답",
-            "편집부품": "CPU/메인보드/그래픽카드/메모리/SSD/파워X"
-            "시리즈명": "
-            }
-            f"다음은 이전 대화 내용입니다: {' '.join(history) if history else '이전 대화 내용 없음'}.\n"
-            f"현재 사용자의 예산 정보는 '{budget}', 사용 목적은 '{purpose}'입니다.\n"
-            f"사용자가 추가적으로 말한 내용은 다음과 같습니다: '{user_message}'\n"
-            """
+        prompt = SYSTEM_PROMPTS["question"].format(
+            budget=budget,
+            purpose=purpose,
+            cpu=cpu,
+            mainboard=mainboard,
+            memory=memory,
+            gpu=gpu,
+            power=power,
+            ssd=ssd,
+            filter_info=read_all_filters(),
+            user_message=user_message,
+            history=" ".join(history) if history else "이전 대화 내용 없음"
         )
-        
         try:
             # LangChain 호출
             response = await self.chain.arun(user_message=prompt)

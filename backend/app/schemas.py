@@ -30,8 +30,9 @@ class PartsResponse(BaseModel):
 
 class UserQuestionRequest(BaseModel):
     user_id: str
-    question: str
+    message: str
 
 class UserQuestionResponse(BaseModel):
     answer: str
-    edit: bool
+    part: str
+    edit: str

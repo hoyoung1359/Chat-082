@@ -2,7 +2,17 @@
 import { OPENAI_API_KEY } from './config.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+<<<<<<< Updated upstream
   
+=======
+  setupQuotationModal();
+  setupComponentModals();
+  setupModalsWithCloseButton();
+
+
+  const addr = "localhost:8000";
+
+>>>>>>> Stashed changes
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
   const startButton = document.getElementById('start-button');
