@@ -117,9 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 제품 수정 
                 let editInput = {};
-                if (temp.편집.bool == true){
+                if (data.편집.bool == true){
                   console.log("편집 필요")
-                  editInput = loadEditInput((temp.편집))
+                  editInput = loadEditInput((data.편집))
                   console.log("전천리된 Edit 정보: ", editInput)
                   let editmenus = Object.keys(editInput);
                   console.log("수정이 필요한 부품: ", editmenus);
