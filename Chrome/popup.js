@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("백엔드 에러:", response.error);
           } else {
             console.log("선택 결과:", response);
-            processSearch(tabId, response); // 검색 프로세스 시작
+            editSearch(tabId, response, editmenus); // 검색 프로세스 시작
             modalInput = response
           }
 
@@ -713,6 +713,62 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error("예상치 못한 에러:", err);
         });
     } 
+  };
+  const editSearch = (tabId, searchInput, editmenus) => {
+    const responseEntries = Object.keys(searchInput.response).filter(key => !key.endsWith("이유"));
+    console.log("Precess Search, DATA: ", searchInput)
+    // updateAllModals(searchInput);
+    // const responseEntries = Object.keys(searchInput["response"]);
+    console.log("ResponseEntries", responseEntries)
+  
+    let searchIndex = 0; // 현재 검색 중인 인덱스
+  
+    // 데피니션
+    const processPartSearch = () => {
+      if (searchIndex < responseEntries.length) {
+        const key = editmenus[searchIndex]; // 현재 메뉴
+        // const productName = searchInput.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
+        // const productName = searchInput['response'][key]["제품명"]
+        const productName = searchInput['response'][key]
+        console.log(productName)
+  
+        // 첫 번째 요청: 메뉴 클릭
+        chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
+          if (menuResponse && menuResponse.success) {
+            setTimeout(() => {
+              // 두 번째 요청: 검색 박스에 제품 이름 입력 및 검색 버튼 클릭
+              chrome.tabs.sendMessage(tabId, { action: "searchProduct", productName }, (searchResponse) => {
+                if (searchResponse && searchResponse.success) {
+                  setTimeout(() => {
+                    // 세 번째 요청: 제품 목록에서 "담기" 버튼 클릭
+                    chrome.tabs.sendMessage(tabId, { action: "clickAddButton", productName }, (addButtonResponse) => {
+                      if (addButtonResponse && addButtonResponse.success) {
+                        console.log(`${key}: '${productName}' 담기 성공`);
+                        searchIndex++; // 다음 파트로 이동
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
+                      } else {
+                        console.error(`${key}: '${productName}' 담기 실패`);
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
+                      }
+                    });
+                  }, 2000); // 검색 후 2초 대기
+                } else {
+                  console.error(`${key}: '${productName}' 검색 실패`);
+                }
+              });
+            }, 2000); // 메뉴 클릭 후 2초 대기
+          }
+        });
+      } else {
+        console.log("모든 검색 작업 완료");
+        searchIndex = 0; // 검색 인덱스 초기화
+        updateAllModals(modalInput);
+        return;
+      }
+    };
+
+    console.log("담기 시작")
+    processPartSearch(); // 첫 번째 검색 시작
   };
 
   loadSettings();
