@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModalsWithCloseButton();
   
 
-  const addr = "43.200.69.78:8000";
+  const addr = "15.165.42.103:8000";
 
   const startScreen = document.getElementById('start-screen');
   const chatContainer = document.getElementById('chat-container');
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 
+                console.log("Chat082의 응답: ", data)
                 // FastAPI로부터 받은 응답 메시지를 화면에 추가합니다
                 addMessage('assistant', data.message);
                 //addMessage('assistant', data.next_step);
@@ -101,6 +102,37 @@ document.addEventListener('DOMContentLoaded', () => {
                   deactivateButton();
                 }
 
+                //// 제품 수정. TODO. "temp"를 "data"로 교체 
+                const temp = {
+                  "message": "안녕하세요!",
+                  "budget": "100만원",
+                  "purpose": "롤",
+                  "next_step": true,
+                  "편집": {
+                      "bool": true,
+                      "CPU": "코어 i3",
+                      "메모리": "8GB",
+                  }
+                }
+
+                // 제품 수정 
+                let editInput = {};
+                if (temp.편집.bool == true){
+                  console.log("편집 필요")
+                  editInput = loadEditInput((temp.편집))
+                  console.log("전천리된 Edit 정보: ", editInput)
+                  let editmenus = Object.keys(editInput);
+                  console.log("수정이 필요한 부품: ", editmenus);
+
+                  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const tabId = tabs[0].id;
+              
+                    editComponent(tabId, editInput, editmenus); // 입력 처리 시작
+                  });
+                }
+    
+
+              
             } catch (error) {
                 console.error('Error:', error);
                 addMessage('system', '서버와 통신 중 오류가 발생했습니다.');
@@ -267,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await response1.json();
         quotationData = data.response; // Save all data
+        console.log("견적 3개 데이터: ", data)
 
         // Update modal content with all three quotations
         updateQuotationUI('가성비', 'bg', data.response["가성비"]);
@@ -416,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 샘플 인풋, #TODO 사용자 선택 격적으로 추후 출력으로 교체
   let currentIndex = 0;
   let modalInput = {};
   const extractedData = {}; // 저장할 딕셔너리
@@ -594,16 +626,105 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // document.getElementById('back-button').addEventListener('click', () => {
-  //   // Logic to go back to the chat screen
-  //   if (resultScreen.style.display === 'flex') {
-  //     resultScreen.style.display = 'none';
-  //     chatContainer.style.display = 'flex';
-  //   } else if (chatContainer.style.display === 'flex') {
-  //     chatContainer.style.display = 'none';
-  //     startScreen.style.display = 'flex';
-  //   }
-  // });
+  // 이걸로 "편집" 항목을 받아서 변환
+  function loadEditInput(editData) {
+    const input = { "편집": {} }; // 새로운 입력 데이터 초기화
+    for (const [key, value] of Object.entries(editData)) {
+      if (key !== "bool") { // 이유 제외
+        let cpuType = "";
+        if (key === "CPU" && value.includes("라이젠")) {
+          cpuType = "AMD";
+        } else if (key === "CPU" && value.includes("i")) {
+          cpuType = "INTEL";
+        }
+        input["편집"][key] = {
+          upperCategory: getUpperCategory(key, cpuType), // 필요한 상위 카테고리 제공
+          value: value,
+        };
+      }
+    }
+    console.log("편집 데이터:", input);
+    return input["편집"]; // 'series'와 호환되는 데이터 반환
+  }
+
+  
+  let editIndex = 0;
+  let extractedItems = {};
+  const editComponent = (tabId, editdata, editmenus) => {
+    if (editIndex < editmenus.length) {
+      const key = editmenus[editIndex]; // 현재 메뉴
+      const { upperCategory, value } = editdata[key];
+  
+      // 첫 번째 요청: 메뉴 클릭
+      chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
+        if (menuResponse && menuResponse.success) {
+          setTimeout(() => {
+            // 두 번째 요청: 상위 카테고리 클릭
+            chrome.tabs.sendMessage(tabId, { action: "clickUpperCategory", upperCategory }, (upperResponse) => {
+              if (upperResponse && upperResponse.success) {
+                setTimeout(() => {
+                  // 세 번째 요청: 값 클릭
+                  chrome.tabs.sendMessage(tabId, { action: "clickValue", value }, (valueResponse) => {
+                    if (valueResponse && valueResponse.success) {
+                      setTimeout(() => {
+                        // 네 번째 요청: 버튼 클릭
+                        chrome.tabs.sendMessage(tabId, { action: "clickButton" }, (buttonResponse) => {
+                          if (buttonResponse && buttonResponse.success) {
+                            setTimeout(() => {
+                              // 다섯 번째 요청: 아이템 추출
+                              chrome.tabs.sendMessage(tabId, { action: "extractItems" }, (itemsResponse) => {
+                                if (itemsResponse && itemsResponse.items) {
+                                  // 필터링 된 데이터를 저장
+                                  extractedItems[key] = {};
+                                  itemsResponse.items.forEach((item, index) => {
+                                    extractedItems[key][`${item.productId}-${index + 1}`] = {
+                                      productName: item.productName,
+                                      price: item.price,
+                                    };
+                                  });
+  
+                                  console.log(`Extracted items for ${key}:`, extractedItems[key]);
+                                }
+
+                                editIndex++; // 다음 입력 처리
+                                setTimeout(() => editComponent(tabId, editdata, editmenus), 2000); // 2초 대기 후 다음 처리
+                              });
+                            }, 2000); // 버튼 클릭 후 2초 대기
+                          }
+                        });
+                      }, 2000); // 값 클릭 후 2초 대기
+                    }
+                  });
+                }, 2000); // 상위 카테고리 클릭 후 2초 대기
+              }
+            });
+          }, 2000); // 메뉴 클릭 후 2초 대기
+        }
+      });
+    } else{
+      console.log("탐색 작업이 완료되었습니다.");
+      console.log("최종 추출된 데이터:", extractedItems);
+      editIndex = 0; // 처리 완료 후 인덱스 초기화
+
+      const user_id = userID.value
+
+      // 추출된 데이터를 백엔드로 전송
+      sendPartsData(user_id, extractedItems)
+        .then((response) => {
+          if (response.error) {
+            console.error("백엔드 에러:", response.error);
+          } else {
+            console.log("선택 결과:", response);
+            processSearch(tabId, response); // 검색 프로세스 시작
+            modalInput = response
+          }
+
+        })
+        .catch((err) => {
+          console.error("예상치 못한 에러:", err);
+        });
+    } 
+  };
 
   loadSettings();
   // 페이지 로드 시 채팅 기록 불러오기
