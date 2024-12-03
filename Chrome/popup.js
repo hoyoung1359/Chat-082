@@ -102,34 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
                   deactivateButton();
                 }
 
-                // //// 제품 수정. TODO. "temp"를 "data"로 교체 
-                // const temp = {
-                //   "message": "안녕하세요!",
-                //   "budget": "100만원",
-                //   "purpose": "롤",
-                //   "next_step": true,
-                //   "편집": {
-                //       "bool": true,
-                //       "CPU": "코어 i3",
-                //       "메모리": "8GB",
-                //   }
-                // }
 
-                // // 제품 수정 
-                // let editInput = {};
-                // if (data.편집.bool == true){
-                //   console.log("편집 필요")
-                //   editInput = loadEditInput((data.편집))
-                //   console.log("전천리된 Edit 정보: ", editInput)
-                //   let editmenus = Object.keys(editInput);
-                //   console.log("수정이 필요한 부품: ", editmenus);
+                // 제품 수정 
+                let editInput = {};
+                if (data.edit.bool == true){
+                  console.log("편집 필요")
+                  editInput = loadEditInput((data.edit))
+                  console.log("전천리된 Edit 정보: ", editInput)
+                  let editmenus = Object.keys(editInput);
+                  console.log("수정이 필요한 부품: ", editmenus);
 
-                //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                //     const tabId = tabs[0].id;
+                  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const tabId = tabs[0].id;
               
-                //     editComponent(tabId, editInput, editmenus); // 입력 처리 시작
-                //   });
-                // }
+                    editComponent(tabId, editInput, editmenus); // 입력 처리 시작
+                  });
+                }
     
 
               
@@ -433,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(`${prefix}-ssd`).textContent = data["SSD"];
     document.getElementById(`${prefix}-power`).textContent = data["파워"];
     document.getElementById(`${prefix}-main`).textContent = data["메인보드"];
-    // document.getElementById(`${prefix}-reason`).textContent = data["이유"]; #TODO
+    document.getElementById(`${prefix}-reason`).textContent = data["이유"];
   }
 
   
@@ -629,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 이걸로 "편집" 항목을 받아서 변환
   function loadEditInput(editData) {
-    const input = { "편집": {} }; // 새로운 입력 데이터 초기화
+    const input = { "edit": {} }; // 새로운 입력 데이터 초기화
     for (const [key, value] of Object.entries(editData)) {
       if (key !== "bool") { // 이유 제외
         let cpuType = "";
@@ -638,14 +626,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (key === "CPU" && value.includes("i")) {
           cpuType = "INTEL";
         }
-        input["편집"][key] = {
+        input["edit"][key] = {
           upperCategory: getUpperCategory(key, cpuType), // 필요한 상위 카테고리 제공
           value: value,
         };
       }
     }
     console.log("편집 데이터:", input);
-    return input["편집"]; // 'series'와 호환되는 데이터 반환
+    return input["edit"]; // 'series'와 호환되는 데이터 반환
   }
 
   
@@ -716,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("백엔드 에러:", response.error);
           } else {
             console.log("선택 결과:", response);
-            processSearch(tabId, response); // 검색 프로세스 시작
+            editSearch(tabId, response, editmenus); // 검색 프로세스 시작
             modalInput = response
           }
 
@@ -725,6 +713,62 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error("예상치 못한 에러:", err);
         });
     } 
+  };
+  const editSearch = (tabId, searchInput, editmenus) => {
+    const responseEntries = Object.keys(searchInput.response).filter(key => !key.endsWith("이유"));
+    console.log("Precess Search, DATA: ", searchInput)
+    // updateAllModals(searchInput);
+    // const responseEntries = Object.keys(searchInput["response"]);
+    console.log("ResponseEntries", responseEntries)
+  
+    let searchIndex = 0; // 현재 검색 중인 인덱스
+  
+    // 데피니션
+    const processPartSearch = () => {
+      if (searchIndex < responseEntries.length) {
+        const key = editmenus[searchIndex]; // 현재 메뉴
+        // const productName = searchInput.find(([entryKey]) => entryKey === key)?.[1]; // 제품명 찾기
+        // const productName = searchInput['response'][key]["제품명"]
+        const productName = searchInput['response'][key]
+        console.log(productName)
+  
+        // 첫 번째 요청: 메뉴 클릭
+        chrome.tabs.sendMessage(tabId, { action: "clickMenu", key }, (menuResponse) => {
+          if (menuResponse && menuResponse.success) {
+            setTimeout(() => {
+              // 두 번째 요청: 검색 박스에 제품 이름 입력 및 검색 버튼 클릭
+              chrome.tabs.sendMessage(tabId, { action: "searchProduct", productName }, (searchResponse) => {
+                if (searchResponse && searchResponse.success) {
+                  setTimeout(() => {
+                    // 세 번째 요청: 제품 목록에서 "담기" 버튼 클릭
+                    chrome.tabs.sendMessage(tabId, { action: "clickAddButton", productName }, (addButtonResponse) => {
+                      if (addButtonResponse && addButtonResponse.success) {
+                        console.log(`${key}: '${productName}' 담기 성공`);
+                        searchIndex++; // 다음 파트로 이동
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
+                      } else {
+                        console.error(`${key}: '${productName}' 담기 실패`);
+                        setTimeout(processPartSearch, 3000); // 2초 대기 후 다음 처리
+                      }
+                    });
+                  }, 2000); // 검색 후 2초 대기
+                } else {
+                  console.error(`${key}: '${productName}' 검색 실패`);
+                }
+              });
+            }, 2000); // 메뉴 클릭 후 2초 대기
+          }
+        });
+      } else {
+        console.log("모든 검색 작업 완료");
+        searchIndex = 0; // 검색 인덱스 초기화
+        updateAllModals(modalInput);
+        return;
+      }
+    };
+
+    console.log("담기 시작")
+    processPartSearch(); // 첫 번째 검색 시작
   };
 
   loadSettings();
