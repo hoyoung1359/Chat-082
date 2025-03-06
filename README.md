@@ -6,7 +6,7 @@ Chat-082는 조립형 PC 구매 과정의 복잡성과 정보 불균형 문제�
 
 ## 시연 영상
 > 서비스 사용 방법과 주요 기능을 확인해보세요
-https://github.com/user-attachments/assets/99d3b6a3-60ac-4ce5-a929-64a82831059e
+> <video src="[https://user-images.githubusercontent.com/...](https://github.com/user-attachments/assets/99d3b6a3-60ac-4ce5-a929-64a82831059e)"></video>
 
 
 ## 주요 기능
