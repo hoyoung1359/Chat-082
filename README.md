@@ -1,5 +1,7 @@
 # Chat-082: AI 기반 맞춤형 조립 PC 견적 서비스
 
+![Image](https://github.com/user-attachments/assets/c3b6feba-e057-4c7c-9201-29055b6df40d)
+
 ## 프로젝트 소개
 
 Chat-082는 조립형 PC 구매 과정의 복잡성과 정보 불균형 문제를 해결하기 위한 혁신적인 크롬 확장프로그램입니다. 인공지능 기술을 활용하여 사용자에게 최적화된 PC 견적 서비스를 제공합니다.
