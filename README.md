@@ -5,14 +5,6 @@
 ## 프로젝트 소개
 
 Chat-082는 조립형 PC 구매 과정의 복잡성과 정보 불균형 문제를 해결하기 위한 혁신적인 크롬 확장프로그램입니다. 인공지능 기술을 활용하여 사용자에게 최적화된 PC 견적 서비스를 제공합니다.
-
-## 시연 영상
-> 서비스 사용 방법과 주요 기능을 확인해보세요
-> <video src="[https://user-images.githubusercontent.com/...](https://github.com/user-attachments/assets/99d3b6a3-60ac-4ce5-a929-64a82831059e)"></video>
-
-
-## 주요 기능
-
 ### 1. 맞춤형 견적 상담
 - 자연스러운 대화를 통한 사용자 요구사항 분석
 - 가성비/밸런스/고성능 3가지 유형의 맞춤형 견적 제안
@@ -77,13 +69,10 @@ export const OPENAI_API_KEY = '당신의_API_키';
 - 데이터 수집 및 가공
 - UI/UX 디자인
 
-## 기대 효과
-
-- 컴퓨터 구매 시간 및 비용 절감 (10분 내외 견적 완성)
-- 시장 정보 불균형 해소
-- 투명하고 신뢰성 있는 구매 경험 제공
 
 ## 참고 자료
+![082_1](https://github.com/user-attachments/assets/09a4d507-a766-41a6-9e64-b0f48c57edfc)
+![082_2](https://github.com/user-attachments/assets/957fdbeb-c6f9-44ce-b080-9986ac0599e3)
 
 - [프로젝트 보고서](https://docs.google.com/document/u/1/d/1O05Q06-aaC--19eQLkiT3rnmLOSTyPLa67kFXkYSFoI/mobilebasic)
 
